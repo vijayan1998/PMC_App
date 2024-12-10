@@ -9,17 +9,14 @@ class BackArrowWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 36,
-        width: 36,
-        padding: const EdgeInsets.only(left: 8,right: 8),
+        // alignment: Alignment.center,
+        width: 16,
+         padding: const EdgeInsets.only(left: 8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            width: 4,
-            color: Colors.white,
-          )
+          color: Colors.white
         ),
-        child: const Icon(Icons.arrow_back_ios,color: Colors.white,size: 16,),
+        child: const Icon(Icons.arrow_back_ios,color: Colors.black,size: 16,),
       ),
     );
   }

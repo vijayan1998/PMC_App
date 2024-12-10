@@ -1,6 +1,8 @@
 class Appnames {
   static const String rooScreen = '/';
   static const String splash = '/splash';
+  static const String splash2 = '/splash2';
+  static const String splash3 = '/splash3';
   static const String login = '/login';
   static const String loginotp = '/loginotp';
   static const String register ='/register';
@@ -22,6 +24,13 @@ class Appnames {
   static const String topicname = '/topicname';
   static const String topicList = '/topicList';
   static const String aichatscreen ='/aichatscreen';
+  static const String notifications = '/notifications';
+  static const String help = '/help';
+  static const String helpview = '/helpView';
+  static const String mycertificate = '/mycertificate';
+  static const String certificateView = '/certificateView';
+  static const String edit = '/edit';
+  static const String raise = '/raise';
 
   
 }

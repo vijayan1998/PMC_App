@@ -9,7 +9,7 @@ class OnBoardText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: Theme.of(context).textTheme.titleSmall!.copyWith(
+      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
         color: Colors.white,
       ),
     );

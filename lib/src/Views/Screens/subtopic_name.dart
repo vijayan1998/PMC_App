@@ -29,7 +29,6 @@ class _SubtopicNameState extends State<SubtopicName> {
       _isBottomContainerVisible = !_isBottomContainerVisible;
     });
   }
-  bool customTileExpanded = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,19 +83,7 @@ class _SubtopicNameState extends State<SubtopicName> {
                     child: Container(
                       width: MediaQuery.of(context).size.width,
                       padding:const EdgeInsets.all(8),
-                      child:  Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Subtopic name',style: Theme.of(context).textTheme.titleSmall!.copyWith(color: Colors.black)),
-                           Icon(
-                                        customTileExpanded
-                                            ? Icons.arrow_drop_up_sharp
-                                            : Icons.arrow_drop_down_sharp,
-                                        color: Colors.black,
-                                        size: 36,
-                                      ),
-                        ],
-                      ),
+                      child:  Text('Subtopic name',style: Theme.of(context).textTheme.titleSmall!.copyWith(color: Colors.black)),
                     ),
                   ),
                 ),
@@ -129,19 +116,7 @@ class _SubtopicNameState extends State<SubtopicName> {
                     child: Container(
                       width: MediaQuery.of(context).size.width,
                       padding:const EdgeInsets.all(8),
-                      child:   Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Subtopic name',style: Theme.of(context).textTheme.titleSmall!.copyWith(color: Colors.black)),
-                           Icon(
-                                        customTileExpanded
-                                            ? Icons.arrow_drop_up_sharp
-                                            : Icons.arrow_drop_down_sharp,
-                                        color: Colors.black,
-                                        size: 36,
-                                      ),
-                        ],
-                      ),
+                      child:  Text('Subtopic name',style: Theme.of(context).textTheme.titleSmall!.copyWith(color: Colors.black)),
                     ),
                   ),
                 ),

@@ -1,4 +1,3 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 
 class CommonContainer extends StatelessWidget {
@@ -18,18 +17,10 @@ class CommonContainer extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             width: width,
             height: height,
-            child: DefaultTextStyle(style: Theme.of(context).textTheme.bodySmall!.copyWith(
+            child: Text(text,style: Theme.of(context).textTheme.bodySmall!.copyWith(
               color: Colors.white,
               fontSize: 18,
-            ),
-            child: AnimatedTextKit(
-              animatedTexts: [
-                TyperAnimatedText(text),
-              ],
-              isRepeatingAnimation: false,
-              ),
-            ),
-            
+            ),),
           ),
         );
 }
@@ -75,8 +66,8 @@ class RectanglePainter extends CustomPainter {
     // Draw the actual path (shape)
     final Path path = Path();
     path.moveTo(0, 0); // Start at top-left corner
-    path.lineTo(size.width - 25, 0); // Draw to the top-right corner, leaving 40px gap
-    path.lineTo(size.width, 25); // Create a slanted line for the top-right corner
+    path.lineTo(size.width - 30, 0); // Draw to the top-right corner, leaving 40px gap
+    path.lineTo(size.width, 30); // Create a slanted line for the top-right corner
     path.lineTo(size.width, size.height); // Line to the bottom-right
     path.lineTo(0, size.height); // Line to the bottom-left corner
     path.close(); // Close the path (goes back to top-left)

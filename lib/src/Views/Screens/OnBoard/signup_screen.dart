@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:pmc/src/Controller/signup_controller.dart';
 import 'package:pmc/src/Views/Routes/route_name.dart';
 import 'package:pmc/src/Views/Utilies/images.dart';
 import 'package:pmc/src/Views/Utilies/sizedbox_widget.dart';
-import 'package:pmc/src/Views/Widget/button_widget.dart';
-import 'package:pmc/src/Views/Widget/onboard_text.dart';
+import 'package:pmc/src/Views/Widget/bottom_widget.dart';
+import 'package:pmc/src/Views/Widget/gradient_button.dart';
 import 'package:pmc/src/Views/Widget/phonefield_widget.dart';
-import 'package:pmc/src/Views/Widget/textfield_drawpaint.dart';
 import 'package:pmc/src/Views/Widget/textformfield_widget.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -22,12 +23,15 @@ class _SignupScreenState extends State<SignupScreen> {
   TextEditingController lastname = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController phone = TextEditingController();
-  TextEditingController date = TextEditingController();
+  TextEditingController dob = TextEditingController();
   bool showvalue = false;
-DateTime selectedDate = DateTime.now();
+    bool isLoading = false;
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  DateTime selectedDate = DateTime.now();
   String? setDate = "DD-MM-YYYY";
   String? dateTime;
-   Future<void> selectDate(BuildContext context) async {
+  Future<void> selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
@@ -37,166 +41,350 @@ DateTime selectedDate = DateTime.now();
     if (picked != null) {
       setState(() {
         selectedDate = picked;
-        date.text = DateFormat.yMd().format(selectedDate);
+        dob.text = DateFormat.yMd().format(selectedDate);
       });
     }
   }
+
+  SignupController signupController = Get.put(SignupController());
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: SingleChildScrollView(
-        child: Container(
-           margin: EdgeInsets.only(top: MediaQuery.of(context).size.height / 22,left: 4,right: 4,),
-          padding:const EdgeInsets.all(8),
-          decoration:const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(AppImages.background),
-              fit: BoxFit.fill
-              ),
-          ),
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: const BoxDecoration(
+        //  color: Color(0xff300080),
+        image: DecorationImage(
+            image: AssetImage(AppImages.background2), fit: BoxFit.fill),
+      ),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.transparent,
+        body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16,horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            child: Form(
+              key: formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
                   Padding(
-                padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width / 14,
-                right: MediaQuery.of(context).size.width /14 ),
-                child: Image.asset(AppImages.logo, 
-               ),
-              ),
-                8.vspace,
-                Center(
-                  child: Text('Signup',style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                    color: Colors.white,
-                  ),),
-                ),
-              8.vspace,
-              const OnBoardText(text: 'First name', color: Colors.white),
-              8.vspace,
-              TextFormWidget(hintText: 'Enter your first name', 
-              color: Colors.white,
-              fillColor: Colors.transparent,
-              height: 66, width: MediaQuery.of(context).size.width, 
-              topsize: 15, 
-              textEditingController: firstname),
-              8.vspace,
-              const OnBoardText(text: 'Last name', color: Colors.white),
-              8.vspace,
-              TextFormWidget(hintText: 'Enter your Last name', 
-              color: Colors.white,
-               fillColor: Colors.transparent,
-              height: 66, width: MediaQuery.of(context).size.width, 
-              topsize: 15, 
-              textEditingController: lastname),
-              8.vspace,
-              const OnBoardText(text: 'Email', color: Colors.white),
-              8.vspace,
-              TextFormWidget(hintText: 'Enter your Email', 
-              color: Colors.white,
-               fillColor: Colors.transparent,
-              height: 66, width: MediaQuery.of(context).size.width, 
-              topsize: 15, 
-              textEditingController: email),
-              8.vspace,
-              const OnBoardText(text: 'Phone', color: Colors.white),
-              8.vspace,
-                PhoneNumberField(
-            height: 66, 
-            width: MediaQuery.of(context).size.width, 
-            topsize: 15, 
-            textEditingController: phone, hintText: 'Enter your phone', hintColor: Colors.white),
-              8.vspace,
-             const Padding(
-                padding:  EdgeInsets.only(left:50.0),
-                child: OnBoardText(text: 'Date of Birth', color: Colors.white),
-              ),
-              8.vspace,
-              Padding(
-                padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width / 12),
-                child: CustomPaint(
-                  painter:RectanglePainter(Colors.transparent,15),
-                  child: SizedBox(
-                    height: 66,
-                    width: MediaQuery.of(context).size.width,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: TextFormField(
-                        controller: date,
-                         keyboardType: TextInputType.text,
-                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.white),
-                         decoration: InputDecoration(
-                          suffixIcon: IconButton(onPressed: (){selectDate(context);}, icon:const Icon(Icons.calendar_month,color: Colors.white,)),
-                          border: InputBorder.none,
-                          hintText: 'DD/MM/YYYY',
-                          hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.white)
-                         ),
+                    padding: EdgeInsets.only(
+                        top: 24,
+                        left: MediaQuery.of(context).size.width / 14,
+                        right: MediaQuery.of(context).size.width / 14),
+                    child: Image.asset(
+                      AppImages.logo,
+                    ),
+                  ),
+                  8.vspace,
+                  Center(
+                    child: Text(
+                      'Create an account',
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            color: Colors.white,
+                          ),
+                    ),
+                  ),
+                  16.vspace,
+                  Row(
+                    children: [
+                      Text(
+                        'First Name',
+                        style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w400,
+                            ),
+                      ),
+                      Text(
+                        ' *',
+                        style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                              color: Colors.red,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
+                            ),
+                      ),
+                    ],
+                  ),
+                  8.vspace,
+                  TextFormWidget(
+                      hintText: 'e.g John',
+                      color: Colors.grey.shade800,
+                      fillColor: Colors.transparent,
+                      textEditingController: firstname,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value){
+                        if (value!.isEmpty) {
+                          return 'Please Required Lastname';
+                        } else if (RegExp(
+                                r"^\s*([A-Za-z]{1,}([\.,] |[-']| ))+ [A-Za-z]+\.?\s*$")
+                            .hasMatch(value)) {
+                          return 'Enter Correct Lastname';
+                        } else {
+                          return null;
+                        }
+                      },),
+                  8.vspace,
+                  Row(
+                    children: [
+                      Text(
+                        'Last Name',
+                        style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w400,
+                            ),
+                      ),
+                      Text(
+                        ' *',
+                        style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                              color: Colors.red,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
+                            ),
+                      ),
+                    ],
+                  ),
+                  8.vspace,
+                  TextFormWidget(
+                      hintText: 'e.g Doe',
+                      color: Colors.grey.shade800,
+                      fillColor: Colors.transparent,
+                      textEditingController: lastname,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value){
+                        if (value!.isEmpty) {
+                          return 'Please Required Lastname';
+                        } else if (RegExp(
+                                r"^\s*([A-Za-z]{1,}([\.,] |[-']| ))+ [A-Za-z]+\.?\s*$")
+                            .hasMatch(value)) {
+                          return 'Enter Correct Lastname';
+                        } else {
+                          return null;
+                        }
+                      },),
+                  8.vspace,
+                  Row(
+                    children: [
+                      Text(
+                        'Email',
+                        style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w400,
+                            ),
+                      ),
+                      Text(
+                        ' *',
+                        style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                              color: Colors.red,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
+                            ),
+                      ),
+                    ],
+                  ),
+                  8.vspace,
+                  TextFormWidget(
+                      hintText: 'example@gmail.com',
+                      color: Colors.grey.shade800,
+                      fillColor: Colors.transparent,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      textEditingController: email,
+                      validator: (value){
+                        if (value!.isEmpty) {
+                        return 'Please Required Email';
+                      } else if (!RegExp(
+                              r'^[\w#][\w\.\’+#](.[\w\\’#]+)\@[a-zA-Z0-9]+(.[a-zA-Z0-9]+)*(.[a-zA-Z]{2,20})$')
+                          .hasMatch(value)) {
+                        return 'Enter correct EmailID';
+                      } else {
+                        return null;
+                      }
+                      },),
+                  8.vspace,
+                  Row(
+                    children: [
+                      Text(
+                        'Phone',
+                        style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w400,
+                            ),
+                      ),
+                      Text(
+                        ' *',
+                        style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                              color: Colors.red,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
+                            ),
+                      ),
+                    ],
+                  ),
+                  8.vspace,
+                  PhoneNumberField(
+                      textEditingController: phone,
+                      hintText: '  Enter phone',
+                      hintColor: Colors.grey.shade800),
+                  8.vspace,
+                  Row(
+                    children: [
+                      Text(
+                        'Date of Birth',
+                        style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w400,
+                            ),
+                      ),
+                      Text(
+                        ' *',
+                        style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                              color: Colors.red,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
+                            ),
+                      ),
+                    ],
+                  ),
+                  8.vspace,
+                  TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    controller: dob,
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                      color: Colors.grey.shade800
+                    ),
+                    decoration: InputDecoration(
+                      
+                      hintText: 'DD/MM/YYYY',
+                      hintStyle: Theme.of(context).textTheme.labelLarge!.copyWith(
+                            color: Colors.grey.shade800,
+                          ),
+                      filled: true,
+                      suffixIcon: IconButton(onPressed: (){
+                        selectDate(context);
+                      },icon: Icon(Icons.calendar_month,color: Colors.grey.shade800,)),
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.only(top: 12,left: 8),
+                      border: InputBorder.none,
+                    ),
+                  ),
+                 
+                  16.vspace,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 22,
+                        height: 22,
+                        alignment: Alignment.center, // Alignment as center
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Color(0xFFF09869),
+                              Color(0xFFC729B2),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(6)),
+                        ),
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              showvalue = !showvalue;
+                            });
+                          },
+                          child: showvalue
+                              ? const Icon(Icons.check_rounded, color: Colors.white)
+                              : Padding(
+                                  padding: const EdgeInsets.all(2.5),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(5)),
+                                  ),
+                                ),
+                        ),
+                      ),
+                      8.hspace,
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width / 1.3,
+                          child: Row(
+                            children: [
+                              Text(
+                                'I agree to the',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium!
+                                    .copyWith(color: Colors.white, fontSize: 16),
+                              ),
+                              InkWell(
+                                onTap: (){
+                                  Get.toNamed(Appnames.termsofservice);
+                                },
+                                child: Text(
+                                  ' Terms of Service',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium!
+                                      .copyWith(
+                                          // color: const Color(0xff4C07F4),
+                                          color: const Color(0xff10d6cd),
+                                          fontSize: 16),
+                                ),
+                              ),
+                              Text(
+                                '  & ',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium!
+                                    .copyWith(color: Colors.white, fontSize: 16),
+                              ),
+                            ],
+                          ))
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                    child: InkWell(
+                      onTap: (){
+                        Get.toNamed(Appnames.privacypolice);
+                      },
+                      child: Text(
+                        'Privacy Policy',
+                        style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                            //color: const Color(0xff4C07F4),
+                            color: const Color(0xff10d6cd),
+                            fontSize: 16),
                       ),
                     ),
                   ),
-                )
+                  36.vspace,
+                  Center(
+                      child:   isLoading ? const CircularProgressIndicator() : GradientButtonWidget(
+                    text: 'Continue',
+                    width: 200,
+                    onTap: () async {
+                      if(formKey.currentState!.validate()){
+                      }
+                      if (showvalue == false) {
+                        Fluttertoast.showToast(
+                            msg: 'Please accept Terms & Privacy');
+                      } else {
+                        signupController.userVerifyPhone(phone.text);
+                        setState(() {
+                        isLoading = true;
+                      });
+                      await Get.toNamed(Appnames.registerotp,arguments: [email.text,firstname.text,
+                        lastname.text,phone.text,dob.text]);
+                        
+                      }
+                    },
+                  )),
+                  36.vspace,
+                ],
               ),
-              16.vspace,
-              Padding(
-                padding:  EdgeInsets.only(left:MediaQuery.of(context).size.width / 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                   Container( 
-                    width: 36, 
-                    height: 36, 
-                    alignment: Alignment.center, // Alignment as center 
-                    decoration: const BoxDecoration( 
-                      gradient: LinearGradient( 
-                        colors: [ 
-                          Color(0xFFF09869), 
-                          Color(0xFFC729B2), 
-                        ], 
-                      ), 
-                      borderRadius: BorderRadius.all(Radius.circular(6)), 
-                    ), 
-                    child: InkWell( 
-                      onTap: () { 
-                        setState(() { 
-                          showvalue = !showvalue; 
-                        }); 
-                      }, 
-                      child: showvalue 
-                          ? const Icon(Icons.check_rounded, color: Colors.white) 
-                          : Padding( 
-                              padding: const EdgeInsets.all(2.5), 
-                              child: Container( 
-                                decoration: BoxDecoration( 
-                                    color: Colors.white, 
-                                    borderRadius: BorderRadius.circular(5)), 
-                              ), 
-                            ), 
-                    ), 
-                  ), 
-                    8.hspace,
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 1.8,
-                      child:const OnBoardText(text: 'I agree to the Terms of Service & Privacy Policy', color: Colors.white))
-                  ],
-                ),
-              ),
-              16.vspace,
-              Padding(
-                padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width / 12),
-                child: CommonButtonWidget(
-                  text: 'Continue', height: 50, width: MediaQuery.of(context).size.width, 
-                  fillColor: Colors.yellow, borderColor: Colors.white, 
-                  shadowColor: Colors.yellow, textColor: Colors.black, onPressed: (){  
-                    Get.toNamed(Appnames.registerotp);
-                  }),
-              ),
-              36.vspace,
-              ],
             ),
           ),
         ),
+        bottomNavigationBar: const BottomWidget(),
       ),
     );
   }

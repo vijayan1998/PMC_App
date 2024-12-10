@@ -1,0 +1,37 @@
+// String get api => 'http://192.168.207.5:5000/';
+String get api => 'http://192.168.235.5:5000/';
+//  String get api => 'http://192.168.189.177:5000/';
+class ApiUrl{
+  static String get signup => "${api}api/usersignup";
+  static String get signIn => "${api}api/usersignin";
+  static String get getUser => "${api}api/getusers";
+  static String get updateEmail => "${api}api/emailupdate";
+  static String get updatePhone => "${api}api/phoneupdate";
+  static String get subscriptionPlan => "${api}api/getsubscriptionplan";
+  static String get getuserId => "${api}api/getusersbyid";
+  static String get uploadimages => "${api}api/images";
+  static String get getImageId => "${api}api/getimagebyid";
+  static String get accountDelete => "${api}api/deleteuser";
+  static String get generateCoursePromt => "${api}api/prompt";
+  static String get sendvideo  => "${api}api/yt";
+  static String get sendTranscript => "${api}api/transcript";
+  static String get sendSummary => "${api}api/generate";
+  static String get sendPrompt => "${api}api/generate";
+  static String get sendImage => "${api}api/image";
+  static String get senddata => "${api}api/course";
+  static String get updatecourse => "${api}api/update";
+  static String get getCoures => "${api}api/courses";
+  static String get getCategory => "${api}api/getcategory";
+  static String get ticket => "${api}api/ticket";
+  static String get getTicketUserid => "${api}api/getticketuserbyid";
+  static String get aichat => "${api}api/chat";
+  static String get finish => "${api}api/finish";
+  static String get ticketImage => "${api}post";
+  static String get stipedetails => "${api}api/stripedetails";
+  static String get subscriptionPost => "${api}api/usersubscription";
+  static String get subscriptionCount => "${api}api/countplan";
+  static String get getattachments => "${api}api/getattachments";
+  static String get getattachmentsfile => "${api}api/file";
+  static String get getsubscription => "${api}api/getsubsbyid";
+}
+

@@ -24,31 +24,34 @@ class ContainerLeftCutShape extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: CutShadowPainter(
-        shadowBlurRadius: shadowBlurRadius,
-        shadowColor: shadowColor,
-        shadowOffset: shadowOffset,
-      ),
-      child: ClipPath(
-        clipper: TopLeftCornerClipper(),
-        child: Container(
-          height: containerHeight,
-          width: containerWidth,
-          decoration: BoxDecoration(
-            color: containerColor, // Background color of the clipped container
-          ),
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: CustomPaint(
-                  painter: BorderPainter(), // Custom painter for the border
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 30),
+      child: CustomPaint(
+        painter: CutShadowPainter(
+          shadowBlurRadius: shadowBlurRadius,
+          shadowColor: shadowColor,
+          shadowOffset: shadowOffset,
+        ),
+        child: ClipPath(
+          clipper: TopLeftCornerClipper(),
+          child: Container(
+            height: containerHeight,
+            width: containerWidth,
+            decoration: BoxDecoration(
+              color: containerColor, // Background color of the clipped container
+            ),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: CustomPaint(
+                    painter: BorderPainter(), // Custom painter for the border
+                  ),
                 ),
-              ),
-              Positioned.fill(
-                child: SingleChildScrollView(child: widget),
-              ),
-            ],
+                Positioned.fill(
+                  child: SingleChildScrollView(child: widget),
+                ),
+              ],
+            ),
           ),
         ),
       ),

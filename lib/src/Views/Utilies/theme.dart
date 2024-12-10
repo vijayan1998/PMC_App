@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pmc/src/Views/Utilies/colors.dart';
-import 'package:pmc/src/Views/Utilies/font.dart';
 
 class AppTheme {
   static var lightTheme = ThemeData(
@@ -18,50 +17,62 @@ class AppTheme {
       dividerColor: const Color(0xFFDEEBC6),
       focusColor:const Color(0xFFCDE6CB),
       textTheme: TextTheme(
-          displayMedium: GoogleFonts.alegreya(
+          displayMedium: GoogleFonts.poppins(
             color: AppColors.appColors.shade900,
-            fontSize: 30,
+            fontSize: 26,
             fontWeight: FontWeight.w500
           ),
-          headlineSmall: TextStyle(
+          headlineLarge: GoogleFonts.poppins(
             color: AppColors.appColors.shade900,
-            fontFamily: AppFont.alegreyaSans,
-            fontWeight: FontWeight.w400,
-            fontSize: 16,
+            // fontWeight: FontWeight.w400,
+            fontSize: 24,
           ),
-          titleLarge: GoogleFonts.alegreya(
+          headlineSmall: GoogleFonts.poppins(
             color: AppColors.appColors.shade900,
-            fontSize: 30,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w400,
+            fontSize: 14,
+          ),
+          titleLarge: GoogleFonts.poppins(
+            color: AppColors.appColors.shade900,
+            fontSize: 28,
           ),  
-          titleMedium: GoogleFonts.alegreya(
+          titleMedium:GoogleFonts.poppins(
             color: AppColors.appColors.shade100,
-            fontSize:25,
+            fontSize:24,
+            ),
+            titleSmall: GoogleFonts.poppins(
+            color: AppColors.appColors.shade100,
+            fontSize:18,
             fontWeight:FontWeight.w500,
             ),
-            titleSmall: GoogleFonts.alegreya(
-            color: AppColors.appColors.shade300,
-            fontSize:22,
-            fontWeight:FontWeight.w500,
-            ),
-            bodyLarge: GoogleFonts.alegreyaSans(
-              color: AppColors.appColors.shade700,
-            fontSize:22,
-            fontWeight:FontWeight.w400,
-            ),
-             bodyMedium: GoogleFonts.alegreyaSans(
-              color: AppColors.appColors.shade300,
+            bodyLarge: GoogleFonts.poppins(
+            color: const Color.fromARGB(255, 255, 255, 255),
             fontSize:18,
             fontWeight:FontWeight.w400,
             ),
-             bodySmall: GoogleFonts.alegreyaSans(
-              color: AppColors.appColors.shade400,
+             bodyMedium: GoogleFonts.poppins(
+              color: Colors.white,
             fontSize:16,
+            fontWeight: FontWeight.w400,
+            ),
+             bodySmall: GoogleFonts.poppins(
+              // color: Colors.white,
+            fontSize:14,
             fontWeight:FontWeight.w400,
             ),
-            labelLarge: GoogleFonts.alegreyaSans(
+            labelLarge: GoogleFonts.poppins(
               color:AppColors.appColors.shade200,
-              fontSize:20,
+              fontSize:16,
+              fontWeight: FontWeight.w400,
+            ),
+            labelMedium: GoogleFonts.poppins(
+              // color:AppColors.appColors.shade200,
+              fontSize:18,
+              fontWeight: FontWeight.w400,
+            ),
+            labelSmall: GoogleFonts.poppins(
+              // color:AppColors.appColors.shade200,
+              fontSize:12,
               fontWeight: FontWeight.w400,
             ),
           ),
