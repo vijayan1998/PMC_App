@@ -78,7 +78,9 @@ Future<void> uploadImage(String name, String user, String image) async {
     if (response.statusCode == 200 || response.statusCode == 201) {
       // Success response
       final Map<String, dynamic> responseData = json.decode(response.body);
-      debugPrint('Image uploaded successfully: ${responseData['image']}');
+      if (kDebugMode) {
+        print('Image uploaded successfully: ${responseData['image']}');
+      }
     } else {
       // Handle failure
       final Map<String, dynamic> errorData = json.decode(response.body);

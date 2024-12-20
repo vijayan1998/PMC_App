@@ -20,6 +20,7 @@ class GenerateCourseController extends GetxController {
   var percentage = 0.obs;
   var isComplete = false.obs;
  var courseProgress = <String, int>{}.obs;
+ UserController currentUser = Get.put(UserController());
 // Helper function to convert HTML content to plain text
 String _convertHtmlToPlainText(String htmlContent) {
   var document = parse(htmlContent);  // Parse the HTML content
@@ -360,6 +361,7 @@ courseProgress[courseId] = completionPercentage;
         String courseId = responseData["courseId"];
           // Navigate to the content screen with response data
           countDoneTopics(courseId,jsonData, mainTopic);
+          updateCount();
           Navigator.push(context, MaterialPageRoute(builder: (context) =>  TopicType(
             topic: mainTopic,
             type: type,
@@ -433,6 +435,7 @@ Future<void> sendDataVideo(
           // Get the courseId from the response
         String courseId = responseData["courseId"];
            countDoneTopics(courseId,jsonData, mainTopic);
+           updateCount();
     Navigator.push(context, MaterialPageRoute(builder: (context) =>  TopicType(
             topic: mainTopic,
             type: type,
@@ -569,8 +572,7 @@ handleSelect(String topics, String sub,Map<String, dynamic> jsonData,String main
       'content': jsonEncode(jsonData),
       'courseId': courseid,
     };
-   
-
+  
     try {
         final res = await http.post(Uri.parse(ApiUrl.updatecourse),
           body: jsonEncode(dataToSend),
@@ -578,6 +580,7 @@ handleSelect(String topics, String sub,Map<String, dynamic> jsonData,String main
 
            if (res.statusCode == 200) {
         final responsedata = jsonDecode(res.body);
+        updateCount();
           Navigator.push(context, MaterialPageRoute(builder: (context) =>  TopicType(
             topic: mainTopic,
             type: type,
@@ -630,7 +633,7 @@ handleSelect(String topics, String sub,Map<String, dynamic> jsonData,String main
     final Map<String, String> dataToSend = {
       "prompt": url,
     };
-
+    
     try {
       final postURL = Uri.parse(ApiUrl.sendTranscript);
       final response = await http.post(
@@ -732,6 +735,25 @@ handleSelect(String topics, String sub,Map<String, dynamic> jsonData,String main
   });
      
     return "toast_id";
+  }
+
+  Future<void> updateCount() async {
+    final body ={
+      "user": currentUser.user.id.toString(),
+    };
+    final response = await http.post(Uri.parse(ApiUrl.updateCount),
+    headers:{'Content-Type': 'application/json',},
+    body: jsonEncode(body));
+    if(response.statusCode == 200){
+      final responseData = jsonDecode(response.body);
+      if (kDebugMode) {
+        print(responseData);
+      }else {
+        if (kDebugMode) {
+          print('error:${response.body}');
+        }
+      }
+    }
   }
 
  void showToastDone(String id) {

@@ -1,11 +1,15 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:pmc/src/Controller/Auth/api_url.dart';
 import 'package:pmc/src/Model/subget.dart';
 import 'package:pmc/src/Model/subscription_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:pmc/src/Views/Sharedpreference/user_controller.dart';
 
 class SubscriptionController extends GetxController{
+  List<dynamic> countPlans = <dynamic>[].obs;
+  UserController currentUser = Get.put(UserController());
 
 Future<List<SubscriptionModel>> subscriptionPlans() async {
  
@@ -33,11 +37,12 @@ Future<Subscriptionget?> getSubscriptionByUserId(String userId) async {
   try {
     final url = Uri.parse('${ApiUrl.getsubscription}?user=$userId');
     final response = await http.get(url);
-
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       if (data['success'] && data['sub'].isNotEmpty) {
-        return Subscriptionget.fromJson(data['sub'][0]);
+       // Fetch the last subscription from the list
+        final lastSubscription = data['sub'].last;
+        return Subscriptionget.fromJson(lastSubscription);
       } else {
         return null;
       }
@@ -48,5 +53,21 @@ Future<Subscriptionget?> getSubscriptionByUserId(String userId) async {
     throw Exception('Error fetching subscription plans: $e');
   }
 }
+
+Future<List<dynamic>> getCount() async {
+  final response = await http.get(
+    Uri.parse("${ApiUrl.getupdateCount}?user=${currentUser.user.id.toString()}"),
+  );
+  if (response.statusCode == 200) {
+    final countPlans = jsonDecode(response.body);
+    return countPlans; // Return the parsed data
+  } else {
+    if (kDebugMode) {
+      print('Failed to load data :${response.body}');
+    }
+    throw Exception('Failed to fetch data');
+  }
+}
+
 
 }

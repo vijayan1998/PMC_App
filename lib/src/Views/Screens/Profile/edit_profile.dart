@@ -211,11 +211,26 @@ class _EditScreenState extends State<EditScreen> {
               child: GradientButtonWidget(
                 text: 'Change Image',
                 width: MediaQuery.of(context).size.width / 2.5,
-                onTap: () {
-                  userdetailsController.uploadImage(
+                onTap: () async {
+                  // Trigger image picker
+                  await pickImage();
+
+                  if (image != null) {
+                    // Ensure base64 string is prepared correctly
+                    // String base64ImageString =
+                    //     base64Encode(await image!.readAsBytes());
+
+                    // Call the upload function
+                    userdetailsController.uploadImage(
                       image!.name,
                       currentUser.user.id.toString(),
-                      base64ImageString.toString());
+                      base64ImageString,
+                    );
+
+                    Fluttertoast.showToast(msg: 'Image uploaded successfully');
+                  } else {
+                    Fluttertoast.showToast(msg: 'Please select an image');
+                  }
                 },
               ),
             ),

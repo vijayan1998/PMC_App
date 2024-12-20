@@ -83,8 +83,62 @@ class _SubGetState extends State<SubGet> {
                         child: Text('Error: ${snapshot.error}'),
                       );
                     } else if (!snapshot.hasData || snapshot.data == null) {
-                      return const Center(
-                        child: Text("error"),
+                      return  Container(
+                        margin: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.only(
+                            top: 8, left: 8, right: 8, bottom: 8),
+                        width: MediaQuery.of(context).size.width,
+                        color: const Color(0xff4C07F4).withOpacity(0.25),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Current Plan',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                ),
+                                Text(
+                               'Free',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                ),
+                                Text(
+                                  'Amount: ₹0',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium!
+                                      .copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                ),
+                                8.vspace,
+                                GradientButtonWidget(
+                                  text: 'Change/Upgrade Plan',
+                                  width:
+                                      MediaQuery.of(context).size.width / 1.5,
+                                  onTap: () {
+                                    Get.toNamed(Appnames.subscription);
+                                  },
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
                       );
                     } else {
                       final subscription = snapshot.data!;
@@ -112,7 +166,7 @@ class _SubGetState extends State<SubGet> {
                                       ),
                                 ),
                                 Text(
-                                  subscription.plan,
+                               subscription.plan,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge!

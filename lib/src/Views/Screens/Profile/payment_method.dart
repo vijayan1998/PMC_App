@@ -26,6 +26,10 @@ class PaymentScreen extends StatefulWidget {
 class _PaymentScreenState extends State<PaymentScreen> {
   String stripePlanIdOne = 'price_1Pd8mq01PbsRdqnLHOa9bhU1';
   String stripePlanIdTwo = 'price_1PfbZK01PbsRdqnLRiN4vScM';
+
+  String keyId = 'rzp_test_9G0AuysSgQi4b2';
+  String keySecret = '209THtmJVeyiJJXvHE20LfjJ';
+  String apiUrl = 'https://api.razorpay.com/v1/orders';
   UserController currentUser = Get.put(UserController());
   Razorpay razorpay = Razorpay();
   void handlePaymentError(PaymentFailureResponse response) {
@@ -69,55 +73,91 @@ class _PaymentScreenState extends State<PaymentScreen> {
       title: 'Success',
       desc: 'Success Payment.',
       btnOkOnPress: () async {
-        print('resdjs:${response.paymentId.toString()}');
-       final formData = {
-                    "subscriberId": response.paymentId.toString(),
-                    "user": currentUser.user.id.toString(),
-                    "plan": widget.plan,
-                    "method": "Razorpay",
-                    "fname": currentUser.user.fname.toString(),
-                    "lname": currentUser.user.lname.toString(),
-                    "email": currentUser.user.email.toString(),
-                    "phone": currentUser.user.phone.toString(),
-                    "amount": widget.amount,
-                    "course": widget.course,
-                  };
-            final subscriptionResponse = await http.post(Uri.parse(ApiUrl.subscriptionPost),
-             headers: {"Content-Type": "application/json"},
-             body: jsonEncode(formData));
-             if(subscriptionResponse.statusCode == 200){
-              final subscriptionData =
-                        jsonDecode(subscriptionResponse.body);
-                    if (kDebugMode) {
-                      print(subscriptionData);
-                    }
-                  // Data for the third POST request
-                    final countPlanData = {
-                      "user": currentUser.user.id.toString(),
-                      "count": widget.course.toString(),
-                    };
-                    final countPlanResponse = await http.post(
-                      Uri.parse(ApiUrl.subscriptionCount),
-                      headers: {"Content-Type": "application/json"},
-                      body: jsonEncode(countPlanData),
-                    );
-                    if (countPlanResponse.statusCode == 200) {
-                      final countPlanResult =
-                          jsonDecode(countPlanResponse.body);
-                      if (kDebugMode) {
-                        print(countPlanResult);
-                      }
-                    // ignore: use_build_context_synchronously
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => NavigatorScreen(index: 0)));
-                    }
-             }
-        
+        final formData = {
+          "subscriberId": response.paymentId.toString(),
+          "user": currentUser.user.id.toString(),
+          "plan": widget.plan,
+          "method": "Razorpay",
+          "fname": currentUser.user.fname.toString(),
+          "lname": currentUser.user.lname.toString(),
+          "email": currentUser.user.email.toString(),
+          "phone": currentUser.user.phone.toString(),
+          "amount": widget.amount,
+          "course": widget.course,
+        };
+        final subscriptionResponse = await http.post(
+            Uri.parse(ApiUrl.subscriptionPost),
+            headers: {"Content-Type": "application/json"},
+            body: jsonEncode(formData));
+        if (subscriptionResponse.statusCode == 200) {
+          final subscriptionData = jsonDecode(subscriptionResponse.body);
+          if (kDebugMode) {
+            print(subscriptionData);
+          }
+          // Data for the third POST request
+          final countPlanData = {
+            "user": currentUser.user.id.toString(),
+            "count": widget.course.toString(),
+          };
+          final countPlanResponse = await http.post(
+            Uri.parse(ApiUrl.subscriptionCount),
+            headers: {"Content-Type": "application/json"},
+            body: jsonEncode(countPlanData),
+          );
+          if (countPlanResponse.statusCode == 200) {
+            final countPlanResult = jsonDecode(countPlanResponse.body);
+            if (kDebugMode) {
+              print(countPlanResult);
+            }
+            // ignore: use_build_context_synchronously
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => NavigatorScreen(index: 0)));
+          }
+        }
       },
     ).show();
   }
+
+  // Function to create an order
+  Future createOrder(int amount) async {
+    final basicAuth =
+        'Basic ${base64Encode(utf8.encode('$keyId:$keySecret'))}'; // Base64 Encoding for Basic Auth
+
+    final Map<String, dynamic> orderData = {
+      'amount': amount,
+      'currency': 'INR',
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': basicAuth,
+        },
+        body: jsonEncode(orderData),
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        print('dfkhdf:$responseData');
+        return responseData['id']; // Return the response data
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
   @override
-  void initState(){
+  void initState() {
     super.initState();
+    currentUser.getUserInfo();
+    razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentError);
+    razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
+    razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWallet);
   }
 
   @override
@@ -150,31 +190,36 @@ class _PaymentScreenState extends State<PaymentScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             InkWell(
-              onTap: () {
-                var cost = int.parse(widget.amount.toString());
-                var options = {
-                  'key': 'rzp_test_1NSzT7RcAdDnzD',
-                  'amount': cost * 100,
-                  'name': 'Pickmycourse.',
-                  "currency":"INR",
-                  'description': 'PickMyCourse Subscription',
-                  "image":"https://hackwittechnologies.com/assets/imgs/pmclogo.png",
-                  'retry': {'enabled': true, 'max_count': 1},
-                  'send_sms_hash': true,
-                  'prefill': {
-                    'contact': currentUser.user.phone.toString(),
-                    'email': currentUser.user.email.toString()
-                  },
-                  'external': {
-                    'wallets': ['paytm']
+              onTap: () async {
+                try {
+                  var cost = int.parse(widget.amount.toString());
+                   String orderId = await createOrder(cost * 100);
+                  var options = {
+                    'key': 'rzp_test_9G0AuysSgQi4b2',
+                    'amount': cost * 100,
+                    'name': 'Pickmycourse.',
+                    'order_id': orderId,
+                    "currency": "INR",
+                    'description': 'PickMyCourse Subscription',
+                    "image":
+                        "https://hackwittechnologies.com/assets/imgs/pmclogo.png",
+                    'retry': {'enabled': true, 'max_count': 1},
+                    'send_sms_hash': true,
+                    'prefill': {
+                      'contact': currentUser.user.phone.toString(),
+                      'email': currentUser.user.email.toString()
+                    },
+                    'external': {
+                      'wallets': ['paytm']
+                    }
+                  };
+                  print('skjhskd:$options');
+                  razorpay.open(options);
+                } catch (e) {
+                  if (kDebugMode) {
+                    print('Error creating order: $e');
                   }
-                };
-                razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentError);
-                razorpay.on(
-                    Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
-                razorpay.on(
-                    Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWallet);
-                razorpay.open(options);
+                }
               },
               child: Container(
                 height: 55,

@@ -1,5 +1,5 @@
 // String get api => 'http://192.168.207.5:5000/';
-String get api => 'http://192.168.235.5:5000/';
+String get api => 'http://192.168.67.5:5000/';
 //  String get api => 'http://192.168.189.177:5000/';
 class ApiUrl{
   static String get signup => "${api}api/usersignup";
@@ -33,5 +33,7 @@ class ApiUrl{
   static String get getattachments => "${api}api/getattachments";
   static String get getattachmentsfile => "${api}api/file";
   static String get getsubscription => "${api}api/getsubsbyid";
+  static String get updateCount => "${api}api/updatecount";
+  static String get getupdateCount => "${api}api/getcountplan";
 }
 

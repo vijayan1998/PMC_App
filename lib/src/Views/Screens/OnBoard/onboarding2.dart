@@ -107,7 +107,9 @@ class _OnboardingScreen2State extends State<OnboardingScreen2> {
                                   backgroundColor: Colors.white,
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(0))),
-                              onPressed: () {},
+                              onPressed: () {
+                                Get.toNamed(Appnames.login);
+                              },
                               child: Text('Skip',
                                   style: Theme.of(context)
                                       .textTheme

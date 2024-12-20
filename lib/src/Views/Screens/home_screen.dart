@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:pmc/src/Controller/course_controller.dart';
+import 'package:pmc/src/Controller/subscription_controller.dart';
 import 'package:pmc/src/Controller/userdetails_controller.dart';
 import 'package:pmc/src/Model/course_model.dart';
 import 'package:pmc/src/Views/Routes/route_name.dart';
@@ -27,6 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
       Get.put(UserdetailsController());
   UserController currentUser = Get.put(UserController());
   CourseController courseController = Get.put(CourseController());
+  SubscriptionController subscriptionController =
+      Get.put(SubscriptionController());
   Uint8List? cachedBytes;
   @override
   void initState() {
@@ -127,22 +130,103 @@ class _HomeScreenState extends State<HomeScreen> {
                                       }
                                     }),
                               ),
-                              Text(
-                                'Subscription : Gold',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelLarge!
-                                    .copyWith(
-                                      color: Colors.white.withOpacity(0.75),
-                                    ),
+                              Obx(
+                                () => FutureBuilder(
+                                    future: subscriptionController
+                                        .getSubscriptionByUserId(
+                                            currentUser.user.id.toString()),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const Center(
+                                            child: CircularProgressIndicator());
+                                      } else if (snapshot.hasError) {
+                                        return Center(
+                                            child: Text(
+                                                'Error : ${snapshot.error}'));
+                                      } else if(!snapshot.hasData || snapshot.data == null){
+                                        return  Text(
+                                             'Subscription : Free',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .labelLarge!
+                                                  .copyWith(
+                                                    color: Colors.white
+                                                        .withOpacity(0.75),
+                                                  ),
+                                            );
+                                      }
+                                      else {
+                                        final subscription = snapshot.data!;
+                                        DateTime parsedDate = DateTime.parse(
+                                            subscription.date.toString());
+                                        String formattedDate =
+                                            DateFormat('dd-MM-yyyy')
+                                                .format(parsedDate);
+                                        return Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                             'Subscription : ${subscription.plan}',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .labelLarge!
+                                                  .copyWith(
+                                                    color: Colors.white
+                                                        .withOpacity(0.75),
+                                                  ),
+                                            ),
+                                            Text(
+                                              'Subscription Expiry : $formattedDate',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .labelLarge!
+                                                  .copyWith(
+                                                      color: Colors.white
+                                                          .withOpacity(0.75)),
+                                            )
+                                          ],
+                                        );
+                                      }
+                                    }),
                               ),
-                              Text(
-                                'Subscription Expiry : 22/12/2024',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelLarge!
-                                    .copyWith(
-                                        color: Colors.white.withOpacity(0.75)),
+                              Obx(
+                                () => FutureBuilder(
+                                    future: subscriptionController.getCount(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const Center(
+                                            child: CircularProgressIndicator());
+                                      } else if (snapshot.hasError) {
+                                        return Center(
+                                            child: Text(
+                                                'Error : ${snapshot.error}'));
+                                      } else if (!snapshot.hasData ||
+                                          snapshot.data!.isEmpty) {
+                                        return Text(
+                                          'Count : 0',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelLarge!
+                                              .copyWith(
+                                                  color: Colors.white
+                                                      .withOpacity(0.75)),
+                                        );
+                                      } else {
+                                        final countplan = snapshot.data;
+                                        return Text(
+                                          'Count : ${countplan?.first["count"] ?? "0"}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelLarge!
+                                              .copyWith(
+                                                  color: Colors.white
+                                                      .withOpacity(0.75)),
+                                        );
+                                      }
+                                    }),
                               )
                             ],
                           )
@@ -166,7 +250,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           } else if (snapshot.hasError) {
                             return Center(
                                 child: Text('Error: ${snapshot.error}'));
-                          }  else {
+                          } else {
                             List<CourseModel> courses = snapshot.data!;
                             int totalCourses = courses.length;
                             // videocourses count
@@ -183,56 +267,74 @@ class _HomeScreenState extends State<HomeScreen> {
                             int imageCount = imagescourses.length;
                             // return Column(
                             //   children: courses.map((course){
-                                return Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    commonContainer('Total \nCourses \nGenerated',
-                                       totalCourses.toString().isEmpty ? "0" :totalCourses.toString(),
-                                         GradientButtonWidget(text: 'View', width: 120,
-                                        onTap: () {
-                                    //        Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
-                                    //   topic: course.mainTopic,
-                                    //   type: course.type,
-                                    //   courseid: course.id,
-                                    //   data: course.content != null ?
-                                    //   jsonDecode(course.content!)
-                                    //   : null
-                                    // )));
-                                        },)),
-                                    4.hspace,
-                                    commonContainer('Video \nCourses \nGenerat',
-                                       videoCount.toString().isEmpty ? "0" : videoCount.toString(),
-                                         GradientButtonWidget(text: 'View', width: 120,
-                                        onTap: (){
-                                    //        Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
-                                    //   topic: course.mainTopic,
-                                    //   type: course.type,
-                                    //   courseid: course.id,
-                                    //   data: course.content != null ?
-                                    //   jsonDecode(course.content!)
-                                    //   : null
-                                    // )));
-                                        },)),
-                                    4.hspace,
-                                    commonContainer('Theory \nCourses \nGenerated',
-                                       imageCount.toString().isEmpty ?"0" :imageCount.toString(),
-                                         GradientButtonWidget(text: 'View', width: 120,
-                                        onTap: (){
-                                    //     Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
-                                    //   topic: course.mainTopic,
-                                    //   type: course.type,
-                                    //   courseid: course.id,
-                                    //   data: course.content != null ?
-                                    //   jsonDecode(course.content!)
-                                    //   : null
-                                    // )));
-                                        },)),
-                                  ],
-                                );
-                          //     }).toList(),
-                          //   );
-                           }
+                            return Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                commonContainer(
+                                    'Total \nCourses \nGenerated',
+                                    totalCourses.toString().isEmpty
+                                        ? "0"
+                                        : totalCourses.toString(),
+                                    GradientButtonWidget(
+                                      text: 'View',
+                                      width: 120,
+                                      onTap: () {
+                                        //        Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
+                                        //   topic: course.mainTopic,
+                                        //   type: course.type,
+                                        //   courseid: course.id,
+                                        //   data: course.content != null ?
+                                        //   jsonDecode(course.content!)
+                                        //   : null
+                                        // )));
+                                      },
+                                    )),
+                                4.hspace,
+                                commonContainer(
+                                    'Video \nCourses \nGenerat',
+                                    videoCount.toString().isEmpty
+                                        ? "0"
+                                        : videoCount.toString(),
+                                    GradientButtonWidget(
+                                      text: 'View',
+                                      width: 120,
+                                      onTap: () {
+                                        //        Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
+                                        //   topic: course.mainTopic,
+                                        //   type: course.type,
+                                        //   courseid: course.id,
+                                        //   data: course.content != null ?
+                                        //   jsonDecode(course.content!)
+                                        //   : null
+                                        // )));
+                                      },
+                                    )),
+                                4.hspace,
+                                commonContainer(
+                                    'Theory \nCourses \nGenerated',
+                                    imageCount.toString().isEmpty
+                                        ? "0"
+                                        : imageCount.toString(),
+                                    GradientButtonWidget(
+                                      text: 'View',
+                                      width: 120,
+                                      onTap: () {
+                                        //     Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
+                                        //   topic: course.mainTopic,
+                                        //   type: course.type,
+                                        //   courseid: course.id,
+                                        //   data: course.content != null ?
+                                        //   jsonDecode(course.content!)
+                                        //   : null
+                                        // )));
+                                      },
+                                    )),
+                              ],
+                            );
+                            //     }).toList(),
+                            //   );
+                          }
                         },
                       ),
                     )),
@@ -266,41 +368,49 @@ class _HomeScreenState extends State<HomeScreen> {
                           // return Column(
                           //   mainAxisAlignment: MainAxisAlignment.start,
                           //   children: courses.map((course){
-                              return Row(
-                                children: [
-                                   commonContainer('Active             \nCourses',
+                          return Row(
+                            children: [
+                              commonContainer(
+                                  'Active             \nCourses',
                                   activeCount.toString(),
-                                   GradientButtonWidget(text: 'View', width: 120,
-                                onTap: (){
-                                  // Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
-                                  //     topic: course.mainTopic,
-                                  //     type: course.type,
-                                  //     courseid: course.id,
-                                  //     data: course.content != null ?
-                                  //     jsonDecode(course.content!)
-                                  //     : null
-                                  //   )));
-                                },)),
+                                  GradientButtonWidget(
+                                    text: 'View',
+                                    width: 120,
+                                    onTap: () {
+                                      // Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
+                                      //     topic: course.mainTopic,
+                                      //     type: course.type,
+                                      //     courseid: course.id,
+                                      //     data: course.content != null ?
+                                      //     jsonDecode(course.content!)
+                                      //     : null
+                                      //   )));
+                                    },
+                                  )),
                               24.hspace,
-                              commonContainer('Completed     \nCourses',
+                              commonContainer(
+                                  'Completed     \nCourses',
                                   completecount.toString(),
-                               GradientButtonWidget(text: 'View', width: 120,
-                              onTap: () {
-                                  //  Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
-                                  //     topic: course.mainTopic,
-                                  //     type: course.type,
-                                  //     courseid: course.id,
-                                  //     data: course.content != null ?
-                                  //     jsonDecode(course.content!)
-                                  //     : null
-                                  //   )));
-                              },)),
-                                ],
-                              );
-                            }
-                            //).toList()
+                                  GradientButtonWidget(
+                                    text: 'View',
+                                    width: 120,
+                                    onTap: () {
+                                      //  Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
+                                      //     topic: course.mainTopic,
+                                      //     type: course.type,
+                                      //     courseid: course.id,
+                                      //     data: course.content != null ?
+                                      //     jsonDecode(course.content!)
+                                      //     : null
+                                      //   )));
+                                    },
+                                  )),
+                            ],
+                          );
+                        }
+                        //).toList()
 
-                          // );
+                        // );
                         //}
                       },
                     ),
@@ -519,15 +629,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                   text: 'View',
                                   width: 80,
                                   onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
-                                      topic: courses[index].mainTopic,
-                                      type: courses[index].type,
-                                      courseid: courses[index].id,
-                                      completed: courses[index].completed,
-                                      data: courses[index].content != null ?
-                                      jsonDecode(courses[index].content!)
-                                      : null
-                                    )));
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => TopicType(
+                                                topic: courses[index].mainTopic,
+                                                type: courses[index].type,
+                                                courseid: courses[index].id,
+                                                completed:
+                                                    courses[index].completed,
+                                                data: courses[index].content !=
+                                                        null
+                                                    ? jsonDecode(
+                                                        courses[index].content!)
+                                                    : null)));
                                   },
                                 ));
                           },
@@ -542,7 +657,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  commonContainer(String text, String text1,Widget widget) {
+  commonContainer(String text, String text1, Widget widget) {
     return Container(
       width: MediaQuery.of(context).size.width / 3.5,
       color: Colors.black.withOpacity(0.75),
@@ -567,7 +682,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 .copyWith(color: Colors.white),
           ),
           widget,
-         
         ],
       ),
     );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pmc/src/Controller/stripe_controller.dart';
 import 'package:pmc/src/Controller/subscription_controller.dart';
+import 'package:pmc/src/Views/Routes/route_name.dart';
 import 'package:pmc/src/Views/Screens/Profile/payment_method.dart';
 import 'package:pmc/src/Views/Sharedpreference/user_controller.dart';
 import 'package:pmc/src/Views/Utilies/images.dart';
@@ -75,6 +76,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         final plans = snapshot.data!;
                         return ListView.builder(
                             shrinkWrap: true,
+                            physics:const NeverScrollableScrollPhysics(),
                             padding: const EdgeInsets.all(0),
                             itemCount: plans.length,
                             itemBuilder: (context, index) {
@@ -89,9 +91,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                   text6: 'Video & Image Course',
                                   buttonwidget: GradientButtonWidget(
                                     text: 'Select',
-                                    width: 120,
+                                    width: 100,
                                     onTap: () async {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) =>  PaymentScreen(
+                                    plans[index].price == '0'?  
+                                    Get.toNamed(Appnames.navigator)
+                                    : Navigator.push(context, MaterialPageRoute(builder: (context) =>  PaymentScreen(
                                         plan: plans[index].packagename,
                                         amount: plans[index].price,
                                         course: plans[index].course,

@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:pmc/src/Controller/course_controller.dart';
 import 'package:pmc/src/Controller/generatecourse_contro.dart';
+import 'package:pmc/src/Controller/subscription_controller.dart';
+import 'package:pmc/src/Controller/userdetails_controller.dart';
+import 'package:pmc/src/Model/course_model.dart';
+import 'package:pmc/src/Model/getusermodel.dart';
+import 'package:pmc/src/Views/Sharedpreference/user_controller.dart';
 import 'package:pmc/src/Views/Utilies/sizedbox_widget.dart';
 import 'package:pmc/src/Views/Widget/gradient_button.dart';
 import 'package:pmc/src/Views/Widget/new_widgets/checkbox_widget.dart';
@@ -19,9 +26,22 @@ class _GenerateCourseState extends State<GenerateCourse> {
   ];
   final int _maxFields = 5;
 
-  GenerateCourseController generateCourseController =
-      Get.put(GenerateCourseController());
+  GenerateCourseController generateCourseController = Get.put(GenerateCourseController());
+  CourseController courseController = Get.put(CourseController());
+  UserdetailsController userdetailsController = Get.put(UserdetailsController());
+  SubscriptionController subscriptionController = Get.put(SubscriptionController());
   bool isLoading = false;
+  UserController  currentUser = Get.put(UserController());
+  List<GetUserModel>? types;
+  List<CourseModel>? courses;
+  int? countlength;
+
+  @override
+  void initState(){
+    super.initState();
+    currentUser.getUserInfo();
+    fetchCourses();
+  }
 
   @override
   void dispose() {
@@ -64,7 +84,22 @@ class _GenerateCourseState extends State<GenerateCourse> {
   bool isimage = false;
   bool isvideo = false;
   TextEditingController entertopic = TextEditingController();
-  // TextEditingController mainTopicController = TextEditingController();
+
+  Future<void> fetchCourses() async {
+    try {
+      final fetchedCourses = await courseController.getCourse(currentUser.user.id.toString());
+      final fetchsubscription = await userdetailsController.getUsers(currentUser.user.id.toString());
+      List<dynamic> counts = await subscriptionController.getCount();
+      setState(() {
+        courses = fetchedCourses;
+        types = fetchsubscription;
+        countlength = counts.first['count'];
+      });
+    } catch (error) {
+      // Handle the error appropriately
+      Fluttertoast.showToast(msg: 'Error: $error');
+    }
+  }
 
   void handleSubmit() {
     String mainTopic2 = entertopic.text.trim().toLowerCase();
@@ -168,7 +203,6 @@ Generate in the form of JSON in this format {
                         style: Theme.of(context).textTheme.titleSmall!.copyWith(
                               color: Colors.white,
                             ),
-                        //TextStyle(color: Colors.white, fontSize: 20),
                       )),
                       10.vspace,
                       Text(
@@ -177,7 +211,6 @@ Generate in the form of JSON in this format {
                             Theme.of(context).textTheme.headlineSmall!.copyWith(
                                   color: Colors.white,
                                 ),
-                        //TextStyle(color: Colors.white, fontSize: 15),
                       ),
                       10.vspace,
                       Row(
@@ -190,7 +223,6 @@ Generate in the form of JSON in this format {
                                 .copyWith(
                                   color: Colors.white,
                                 ),
-                            //TextStyle(color: Colors.white,fontSize: 17),
                           ),
                           Text(
                             "*",
@@ -199,7 +231,6 @@ Generate in the form of JSON in this format {
                                       color: Colors.red,
                                     ),
                           )
-                          //TextStyle(color: Colors.red,fontSize: 16),)
                         ],
                       ),
                       5.vspace,
@@ -225,7 +256,6 @@ Generate in the form of JSON in this format {
                         style: Theme.of(context).textTheme.bodySmall!.copyWith(
                               color: Colors.white,
                             ),
-                        //  TextStyle(color: Colors.white, fontSize: 16),
                       ),
                       10.vspace,
                       Row(
@@ -238,7 +268,6 @@ Generate in the form of JSON in this format {
                                 .copyWith(
                                   color: Colors.white,
                                 ),
-                            //  TextStyle(color: Colors.white,fontSize: 17),
                           ),
                           Text(
                             "*",
@@ -247,7 +276,6 @@ Generate in the form of JSON in this format {
                                       color: Colors.red,
                                     ),
                           )
-                          // TextStyle(color: Colors.red,fontSize: 16),)
                         ],
                       ),
                       5.vspace,
@@ -289,7 +317,6 @@ Generate in the form of JSON in this format {
                         style: Theme.of(context).textTheme.bodySmall!.copyWith(
                               color: Colors.white,
                             ),
-                        // TextStyle(color: Colors.white, fontSize: 16),
                       ),
                       10.vspace,
                       Text(
@@ -297,7 +324,6 @@ Generate in the form of JSON in this format {
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                               color: Colors.white,
                             ),
-                        //TextStyle(color: Colors.white,fontSize: 17),
                       ),
                       5.vspace,
                       ListView.builder(
@@ -351,7 +377,6 @@ Generate in the form of JSON in this format {
                         style: Theme.of(context).textTheme.bodySmall!.copyWith(
                               color: Colors.white,
                             ),
-                        //TextStyle(color: Colors.white, fontSize: 16),
                       ),
                       10.vspace,
                       Row(
@@ -364,7 +389,6 @@ Generate in the form of JSON in this format {
                                 .copyWith(
                                   color: Colors.white,
                                 ),
-                            //TextStyle(color: Colors.white,fontSize: 17),
                           ),
                           Text(
                             "*",
@@ -373,7 +397,6 @@ Generate in the form of JSON in this format {
                                       color: Colors.red,
                                     ),
                           )
-                          // TextStyle(color: Colors.red,fontSize: 16),)
                         ],
                       ),
                       5.vspace,
@@ -404,15 +427,30 @@ Generate in the form of JSON in this format {
                   color: Colors.white,
                 ),
                 20.vspace,
-               isLoading ? const CircularProgressIndicator() : GradientButtonWidget(
-                    onTap: () {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      handleSubmit();
-                    },
-                  text: "Generate Course",
-                    width: 200),
+               isLoading ? const CircularProgressIndicator() : 
+               GradientButtonWidget(
+                        onTap: () {
+                          setState(() {
+                            isLoading = true;
+                          });
+                        var type = types![0].type;
+                        if( type == "free" && courses!.length == 1){
+                          Fluttertoast.showToast(msg: 'Please subscribe to access more courses.');
+                        } else if(type != 'free'){
+                          if(countlength! > 0){
+                             handleSubmit();
+                          }else {
+                            Fluttertoast.showToast(msg: 'Your monthly plan has reached the limit. Please upgrade the Monthly plan for further access');
+                          }   
+                        }
+                        else {
+                           handleSubmit();
+                         
+                        }
+                          
+                        },
+                      text: "Generate Course",
+                        width: 200),
                 const SizedBox(height: 20),
               ],
             ),

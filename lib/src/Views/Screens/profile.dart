@@ -100,8 +100,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           );
                         } else {
                           return Container(
-                            height: 86,
-                            width: 86,
+                            height: 76,
+                            width: 76,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               image: DecorationImage(
@@ -156,7 +156,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         .copyWith(color: Colors.white),
                                   ),
                                   Text(
-                                    'Phone:+91 ${user.phone}',
+                                    'Phone: ${user.phone}',
                                     style: Theme.of(context)
                                         .textTheme
                                         .labelLarge!
@@ -213,16 +213,16 @@ class _ProfilePageState extends State<ProfilePage> {
             8.vspace,
             InkWell(
                 onTap: () async {
-                  final subscription = await subscriptionController
-                      .getSubscriptionByUserId(currentUser.user.id.toString());
-                  if (subscription != null) {
+                  // final subscription = await subscriptionController
+                      // .getSubscriptionByUserId(currentUser.user.id.toString());
+                  // if (subscription != null) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const SubGet()),
-                    );
-                  } else {
-                    Get.toNamed(Appnames.subscription);
-                  }
+                     );
+                  // } else {
+                  //   Get.toNamed(Appnames.subscription);
+                  // }
                 },
                 child: const ProfileWidget(
                     text: 'My Subscription', image: AppImages.subscription)),
