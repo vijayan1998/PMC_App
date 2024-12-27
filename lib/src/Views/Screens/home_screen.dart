@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -35,8 +34,28 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     currentUser.getUserInfo();
+    fetchAndDecodeImage();
   }
 
+  Future<Uint8List?> fetchAndDecodeImage() async {
+    if (cachedBytes != null) {
+      // Use cached image if available
+      return cachedBytes;
+    }
+
+    try {
+      final base64Image = await userdetailsController.getImageById(
+        currentUser.user.id.toString(),
+      );
+      if (base64Image != null) {
+        cachedBytes = base64Decode(base64Image);
+      }
+    } catch (e) {
+      // Handle error appropriately
+      debugPrint('Error fetching image: $e');
+    }
+    return cachedBytes;
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -56,7 +75,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.only(
                       top: 48, left: 16, right: 16, bottom: 12),
                   decoration: const BoxDecoration(
-                      //  color: Color(0xff200098),
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -86,7 +104,34 @@ class _HomeScreenState extends State<HomeScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Image.asset(AppImages.user, height: 76, width: 76),
+                          Obx(
+                    () => FutureBuilder<Uint8List?>(
+                      future: fetchAndDecodeImage(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.active) {
+                          return const CircularProgressIndicator();
+                        } else if (snapshot.hasError || snapshot.data == null) {
+                          return Image.asset(
+                            AppImages.user,
+                            height: 96,
+                          );
+                        } else {
+                          return Container(
+                            height: 76,
+                            width: 76,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: MemoryImage(snapshot.data!),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
                           8.hspace,
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       } else if (snapshot.hasError) {
                                         return Center(
                                             child: Text(
-                                                'Error :${snapshot.hasError}'));
+                                                'Error :${snapshot.error}'));
                                       } else if (!snapshot.hasData ||
                                           snapshot.data!.isEmpty) {
                                         return const Center(
@@ -144,18 +189,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                         return Center(
                                             child: Text(
                                                 'Error : ${snapshot.error}'));
-                                      } else if(!snapshot.hasData || snapshot.data == null){
-                                        return  Text(
-                                             'Subscription : Free',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .labelLarge!
-                                                  .copyWith(
-                                                    color: Colors.white
-                                                        .withOpacity(0.75),
-                                                  ),
-                                            );
-                                      }
+                                      } 
+                                      else if (!snapshot.hasData ||
+                                          snapshot.data == null) {
+                                        return Text(
+                                          'Subscription : Free',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelLarge!
+                                              .copyWith(
+                                                color: Colors.white
+                                                    .withOpacity(0.75),
+                                              ),
+                                        );
+                                      } 
                                       else {
                                         final subscription = snapshot.data!;
                                         DateTime parsedDate = DateTime.parse(
@@ -168,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                             'Subscription : ${subscription.plan}',
+                                              'Subscription : ${subscription.plan}',
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .labelLarge!
@@ -265,8 +312,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                     image.type == 'text & image course')
                                 .toList();
                             int imageCount = imagescourses.length;
-                            // return Column(
-                            //   children: courses.map((course){
                             return Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -280,14 +325,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                       text: 'View',
                                       width: 120,
                                       onTap: () {
-                                        //        Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
-                                        //   topic: course.mainTopic,
-                                        //   type: course.type,
-                                        //   courseid: course.id,
-                                        //   data: course.content != null ?
-                                        //   jsonDecode(course.content!)
-                                        //   : null
-                                        // )));
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => TopicType(
+                                                    topic: courses[0].mainTopic,
+                                                    type: courses[0].type,
+                                                    courseid: courses[0].id,
+                                                    data: courses[0].content !=
+                                                            null
+                                                        ? jsonDecode(
+                                                            courses[0].content!)
+                                                        : null)));
                                       },
                                     )),
                                 4.hspace,
@@ -300,14 +349,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                       text: 'View',
                                       width: 120,
                                       onTap: () {
-                                        //        Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
-                                        //   topic: course.mainTopic,
-                                        //   type: course.type,
-                                        //   courseid: course.id,
-                                        //   data: course.content != null ?
-                                        //   jsonDecode(course.content!)
-                                        //   : null
-                                        // )));
+                                               Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
+                                          topic: courses[0].mainTopic,
+                                          type: courses[0].type,
+                                          courseid: courses[0].id,
+                                          data: courses[0].content != null ?
+                                          jsonDecode(courses[0].content!)
+                                          : null
+                                        )));
                                       },
                                     )),
                                 4.hspace,
@@ -320,20 +369,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                       text: 'View',
                                       width: 120,
                                       onTap: () {
-                                        //     Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
-                                        //   topic: course.mainTopic,
-                                        //   type: course.type,
-                                        //   courseid: course.id,
-                                        //   data: course.content != null ?
-                                        //   jsonDecode(course.content!)
-                                        //   : null
-                                        // )));
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
+                                          topic: courses[0].mainTopic,
+                                          type: courses[0].type,
+                                          courseid: courses[0].id,
+                                          data: courses[0].content != null ?
+                                          jsonDecode(courses[0].content!)
+                                          : null
+                                        )));
                                       },
                                     )),
                               ],
                             );
-                            //     }).toList(),
-                            //   );
                           }
                         },
                       ),
@@ -365,9 +412,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               .where((complete) => complete.completed == true)
                               .toList();
                           int completecount = completedCourse.length;
-                          // return Column(
-                          //   mainAxisAlignment: MainAxisAlignment.start,
-                          //   children: courses.map((course){
                           return Row(
                             children: [
                               commonContainer(
@@ -377,14 +421,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                     text: 'View',
                                     width: 120,
                                     onTap: () {
-                                      // Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
-                                      //     topic: course.mainTopic,
-                                      //     type: course.type,
-                                      //     courseid: course.id,
-                                      //     data: course.content != null ?
-                                      //     jsonDecode(course.content!)
-                                      //     : null
-                                      //   )));
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
+                                          topic: courses[0].mainTopic,
+                                          type: courses[0].type,
+                                          courseid: courses[0].id,
+                                          data: courses[0].content != null ?
+                                          jsonDecode(courses[0].content!)
+                                          : null
+                                        )));
                                     },
                                   )),
                               24.hspace,
@@ -395,23 +439,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                     text: 'View',
                                     width: 120,
                                     onTap: () {
-                                      //  Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
-                                      //     topic: course.mainTopic,
-                                      //     type: course.type,
-                                      //     courseid: course.id,
-                                      //     data: course.content != null ?
-                                      //     jsonDecode(course.content!)
-                                      //     : null
-                                      //   )));
+                                       Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
+                                          topic: courses[0].mainTopic,
+                                          type: courses[0].type,
+                                          courseid: courses[0].id,
+                                          data: courses[0].content != null ?
+                                          jsonDecode(courses[0].content!)
+                                          : null
+                                        )));
                                     },
                                   )),
                             ],
                           );
                         }
-                        //).toList()
-
-                        // );
-                        //}
                       },
                     ),
                   ),

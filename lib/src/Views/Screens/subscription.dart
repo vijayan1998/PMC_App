@@ -10,6 +10,7 @@ import 'package:pmc/src/Views/Utilies/images.dart';
 import 'package:pmc/src/Views/Utilies/sizedbox_widget.dart';
 import 'package:pmc/src/Views/Widget/gradient_button.dart';
 import 'package:pmc/src/Views/Widget/subscription_widget.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({super.key});
@@ -20,13 +21,20 @@ class SubscriptionScreen extends StatefulWidget {
 
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
   StripeController stripeController = Get.put(StripeController());
+
   SubscriptionController subscriptionController =
       Get.put(SubscriptionController());
   UserController currentUser = Get.put(UserController());
   String stripePlanIdOne = 'price_1Pd8mq01PbsRdqnLHOa9bhU1';
   String stripePlanIdTwo = 'price_1PfbZK01PbsRdqnLRiN4vScM';
-  // // String stripeId = '';
-  // String customerId = '';
+    String keyId = 'rzp_test_9G0AuysSgQi4b2';
+  String keySecret = '209THtmJVeyiJJXvHE20LfjJ';
+  Razorpay razorpay = Razorpay();
+  @override
+  void initState(){
+    super.initState();
+   subscriptionController.getUserLocation();    
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -94,11 +102,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                     width: 100,
                                     onTap: () async {
                                     plans[index].price == '0'?  
-                                    Get.toNamed(Appnames.navigator)
-                                    : Navigator.push(context, MaterialPageRoute(builder: (context) =>  PaymentScreen(
+                                    Get.toNamed(Appnames.navigator) 
+                                  :  Navigator.push(context, MaterialPageRoute(builder: (context) =>  PaymentScreen(
                                         plan: plans[index].packagename,
                                         amount: plans[index].price,
                                         course: plans[index].course,
+                                        tax: plans[index].tax,
                                       )));
                                       
                                      
@@ -114,5 +123,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       ),
     );
   }
+
+
+ 
+
 
 }

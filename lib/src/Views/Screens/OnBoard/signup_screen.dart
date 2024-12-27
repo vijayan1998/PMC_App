@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:pmc/src/Controller/signup_controller.dart';
@@ -365,8 +364,9 @@ class _SignupScreenState extends State<SignupScreen> {
                       if(formKey.currentState!.validate()){
                       }
                       if (showvalue == false) {
-                        Fluttertoast.showToast(
-                            msg: 'Please accept Terms & Privacy');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text("Please accept Terms & Privacy")),);
                       } else {
                         signupController.userVerifyPhone(phone.text);
                         setState(() {

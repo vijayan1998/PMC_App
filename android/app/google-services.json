@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "111042309336",
-    "project_id": "pickmycourse-8cc02",
-    "storage_bucket": "pickmycourse-8cc02.firebasestorage.app"
+    "project_number": "27261355513",
+    "project_id": "pick-my-course-da02e",
+    "storage_bucket": "pick-my-course-da02e.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:111042309336:android:c6f0c55900e2c86439fbad",
+        "mobilesdk_app_id": "1:27261355513:android:27e0b8c43d255c4ea92928",
         "android_client_info": {
           "package_name": "pmc.app"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDg5zJKy9IoW29ZPX6yVdzCSHSGct-aywQ"
+          "current_key": "AIzaSyCdJpKLRvBVKAJ28xKgL581ecRZrDwvVCw"
         }
       ],
       "services": {

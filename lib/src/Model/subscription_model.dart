@@ -2,7 +2,7 @@ class SubscriptionModel{
   final String packagename;
   final String price;
   final String course;
-  final String tax;
+  final int tax;
   final String subtopic;
   final String coursetype;
 
@@ -14,7 +14,7 @@ class SubscriptionModel{
       packagename: json['packagename'] ?? '', 
       price: json['price'].toString(), 
       course: json['course'].toString(), 
-      tax: json['tax'].toString(), 
+      tax: json['tax'], 
       coursetype: json['coursetype'] ?? '', 
       subtopic: json['subtopic'] ?? '');
   }

@@ -1,15 +1,16 @@
 import 'dart:convert';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/foundation.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:pmc/src/Controller/Auth/api_url.dart';
+import 'package:pmc/src/Controller/subscription_controller.dart';
 import 'package:pmc/src/Views/Screens/Profile/paymentwebview.dart';
 import 'package:pmc/src/Views/Screens/navigator_screen.dart';
 import 'package:pmc/src/Views/Sharedpreference/user_controller.dart';
 import 'package:pmc/src/Views/Utilies/images.dart';
-import 'package:pmc/src/Views/Utilies/sizedbox_widget.dart';
 import 'package:pmc/src/Views/Widget/back_arrow_widget.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
@@ -17,7 +18,8 @@ class PaymentScreen extends StatefulWidget {
   final String? plan;
   final String? course;
   final String? amount;
-  const PaymentScreen({super.key, this.plan, this.course, this.amount});
+  final int? tax;
+  const PaymentScreen({super.key, this.plan, this.course, this.amount, this.tax});
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
@@ -29,8 +31,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   String keyId = 'rzp_test_9G0AuysSgQi4b2';
   String keySecret = '209THtmJVeyiJJXvHE20LfjJ';
-  String apiUrl = 'https://api.razorpay.com/v1/orders';
+  
   UserController currentUser = Get.put(UserController());
+  SubscriptionController subscriptionController = Get.put(SubscriptionController());
   Razorpay razorpay = Razorpay();
   void handlePaymentError(PaymentFailureResponse response) {
     AwesomeDialog(
@@ -73,7 +76,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
       title: 'Success',
       desc: 'Success Payment.',
       btnOkOnPress: () async {
-        final formData = {
+          final url = 'https://api.razorpay.com/v1/payments/${response.paymentId.toString()}';
+        final basicAuth =
+        'Basic ${base64Encode(utf8.encode('$keyId:$keySecret'))}';
+            final formData = {
           "subscriberId": response.paymentId.toString(),
           "user": currentUser.user.id.toString(),
           "plan": widget.plan,
@@ -85,7 +91,21 @@ class _PaymentScreenState extends State<PaymentScreen> {
           "amount": widget.amount,
           "course": widget.course,
         };
-        final subscriptionResponse = await http.post(
+
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': basicAuth,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final paymentData = jsonDecode(response.body);
+        String status = paymentData['status'];
+        if (status == 'captured') {
+          Fluttertoast.showToast(msg: 'Payment successful');
+           final subscriptionResponse = await http.post(
             Uri.parse(ApiUrl.subscriptionPost),
             headers: {"Content-Type": "application/json"},
             body: jsonEncode(formData));
@@ -109,52 +129,36 @@ class _PaymentScreenState extends State<PaymentScreen> {
             if (kDebugMode) {
               print(countPlanResult);
             }
-            // ignore: use_build_context_synchronously
             Navigator.push(
+                // ignore: use_build_context_synchronously
                 context,
                 MaterialPageRoute(
                     builder: (context) => NavigatorScreen(index: 0)));
           }
         }
-      },
-    ).show();
-  }
 
-  // Function to create an order
-  Future createOrder(int amount) async {
-    final basicAuth =
-        'Basic ${base64Encode(utf8.encode('$keyId:$keySecret'))}'; // Base64 Encoding for Basic Auth
-
-    final Map<String, dynamic> orderData = {
-      'amount': amount,
-      'currency': 'INR',
-    };
-
-    try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': basicAuth,
-        },
-        body: jsonEncode(orderData),
-      );
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final Map<String, dynamic> responseData = jsonDecode(response.body);
-        print('dfkhdf:$responseData');
-        return responseData['id']; // Return the response data
+        } else if (status == 'refunded') {
+          Fluttertoast.showToast(msg: 'Payment refunded');
+        } else {
+          debugPrint('Payment status: $status');
+        }
       } else {
-        return null;
+        debugPrint('Error verifying payment');
       }
     } catch (e) {
-      return null;
+      if (kDebugMode) {
+        print('Error verifying payment: $e');
+      }
     }
+      },
+    ).show();
   }
 
   @override
   void initState() {
     super.initState();
     currentUser.getUserInfo();
+    subscriptionController.convertCurrency(widget.amount.toString(), 'USD', "INR");
     razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentError);
     razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
     razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWallet);
@@ -183,117 +187,112 @@ class _PaymentScreenState extends State<PaymentScreen> {
         ),
         elevation: 12,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            InkWell(
-              onTap: () async {
-                try {
-                  var cost = int.parse(widget.amount.toString());
-                   String orderId = await createOrder(cost * 100);
-                  var options = {
-                    'key': 'rzp_test_9G0AuysSgQi4b2',
-                    'amount': cost * 100,
-                    'name': 'Pickmycourse.',
-                    'order_id': orderId,
-                    "currency": "INR",
-                    'description': 'PickMyCourse Subscription',
-                    "image":
-                        "https://hackwittechnologies.com/assets/imgs/pmclogo.png",
-                    'retry': {'enabled': true, 'max_count': 1},
-                    'send_sms_hash': true,
-                    'prefill': {
-                      'contact': currentUser.user.phone.toString(),
-                      'email': currentUser.user.email.toString()
-                    },
-                    'external': {
-                      'wallets': ['paytm']
-                    }
-                  };
-                  print('skjhskd:$options');
-                  razorpay.open(options);
-                } catch (e) {
-                  if (kDebugMode) {
-                    print('Error creating order: $e');
-                  }
-                }
-              },
-              child: Container(
-                height: 55,
-                width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: Colors.white,
-                    image: const DecorationImage(
-                      image: AssetImage(AppImages.razorpay),
-                      scale: 20.0,
-                    )),
-              ),
-            ),
-            24.vspace,
-            InkWell(
-              onTap: () async {
-                String planId = stripePlanIdOne;
-                if (widget.amount == 'Monthly Plan') {
-                  planId = stripePlanIdTwo;
-                }
-
-                final dataToSend = {
-                  'planId': planId,
-                };
-
-                try {
-                  final response = await http.post(
-                    Uri.parse(
-                        'https://pickmycourse.onrender.com/api/stripepayment'),
-                    headers: {'Content-Type': 'application/json'},
-                    body: jsonEncode(dataToSend),
-                  );
-
-                  if (response.statusCode == 200) {
-                    final data = jsonDecode(response.body);
-                    final stripeUrl = data['url'];
-                    final stripeId = data['id'];
-                    // Open WebView to display Stripe Checkout
-                    Navigator.push(
-                      // ignore: use_build_context_synchronously
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PaymentWebView(
-                            stripeId: stripeId,
-                            plan: widget.plan.toString(),
-                            amount: widget.amount.toString(),
-                            course: widget.course.toString(),
-                            url: stripeUrl),
-                      ),
-                    );
-                  } else {
-                    throw 'Failed to create a payment session.';
-                  }
-                } catch (e) {
-                  if (kDebugMode) {
-                    print('Error: $e');
-                  }
-                }
-              },
-              child: Container(
-                height: 55,
-                width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: Colors.white,
-                    image: const DecorationImage(
-                      image: AssetImage(AppImages.stripe),
-                      scale: 20.0,
-                    )),
-              ),
-            ),
-          ],
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+          child: subscriptionController.country == 'IN' ? InkWell(
+             onTap: () async {
+               try {
+                 var cost = int.parse(widget.amount.toString());
+                  String orderId = await subscriptionController.createOrder(widget.tax!);
+                   var options = {
+                   'key': 'rzp_test_9G0AuysSgQi4b2',
+                   'amount': cost * 100,
+                   'name': 'Pickmycourse.',
+                   'order_id': orderId,
+                   "currency": "INR",
+                   'description': 'PickMyCourse Subscription',
+                   "image":
+                       "https://hackwittechnologies.com/assets/imgs/pmclogo.png",
+                   'retry': {'enabled': true, 'max_count': 1},
+                   'send_sms_hash': true,
+                   'prefill': {
+                     'contact': currentUser.user.phone.toString(),
+                     'email': currentUser.user.email.toString()
+                   },
+                   'external': {
+                     'wallets': ['paytm']
+                   }
+                 };
+                 razorpay.open(options);                  
+               } catch (e) {
+                 if (kDebugMode) {
+                   print('Error creating order: $e');
+                 }
+               }
+             },
+             child: Container(
+               height: 76,
+               width: MediaQuery.of(context).size.width,
+               padding: const EdgeInsets.all(16),
+               decoration: BoxDecoration(
+                   borderRadius: BorderRadius.circular(12),
+                   color: Colors.white,
+                   image: const DecorationImage(
+                     image: AssetImage(AppImages.razorpay),
+                     scale: 18.0,
+                   )),
+             ),
+           )
+            : 
+           InkWell(
+             onTap: () async {
+               String planId = stripePlanIdOne;
+               if (widget.amount == 'Monthly Plan') {
+                 planId = stripePlanIdTwo;
+               }
+          
+               final dataToSend = {
+                 'planId': planId,
+               };
+          
+               try {
+                 final response = await http.post(
+                   Uri.parse(
+                       'https://pickmycourse.onrender.com/api/stripepayment'),
+                   headers: {'Content-Type': 'application/json'},
+                   body: jsonEncode(dataToSend),
+                 );
+          
+                 if (response.statusCode == 200) {
+                   final data = jsonDecode(response.body);
+                   final stripeUrl = data['url'];
+                   final stripeId = data['id'];
+                   // Open WebView to display Stripe Checkout
+                   Navigator.push(
+                     // ignore: use_build_context_synchronously
+                     context,
+                     MaterialPageRoute(
+                       builder: (context) => PaymentWebView(
+                           stripeId: stripeId,
+                           plan: widget.plan.toString(),
+                           amount: widget.amount.toString(),
+                           course: widget.course.toString(),
+                           url: stripeUrl),
+                     ),
+                   );
+                 } else {
+                   throw 'Failed to create a payment session.';
+                 }
+               } catch (e) {
+                 if (kDebugMode) {
+                   print('Error: $e');
+                 }
+               }
+             },
+             child: Container(
+               height: 55,
+               width: MediaQuery.of(context).size.width,
+               padding: const EdgeInsets.all(16),
+               decoration: BoxDecoration(
+                   borderRadius: BorderRadius.circular(12),
+                   color: Colors.white,
+                   image: const DecorationImage(
+                     image: AssetImage(AppImages.stripe),
+                     scale: 20.0,
+                   )),
+             ),
+           ),
         ),
       ),
     );

@@ -18,72 +18,82 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController phone = TextEditingController();
-  SignupController  signupController = Get.put(SignupController());
-    bool isLoading = false;
+  SignupController signupController = Get.put(SignupController());
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding:const EdgeInsets.all(16),
-     // color:const Color(0xff300080),
-      decoration:const BoxDecoration(
+      padding: const EdgeInsets.all(16),
+      // color:const Color(0xff300080),
+      decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(AppImages.background2),
-          fit: BoxFit.fill
-          ),
+            image: AssetImage(AppImages.background2), fit: BoxFit.fill),
       ),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-               Padding(
-                padding:  EdgeInsets.only(
-                  top: 48,left: MediaQuery.of(context).size.width / 14,
-                right: MediaQuery.of(context).size.width /14 ),
-                child: Image.asset(AppImages.logo, 
-               ),
-              ),
-              24.vspace,
-              Center(child: Text('Login',style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                color: Colors.white,
-              ),)),
-             36.vspace,
-            const OnBoardText(text: 'Phone', color: Colors.white),
-            16.vspace,
-              PhoneNumberField( 
-                textEditingController: phone, hintText: 'Enter phone', hintColor: Colors.grey.shade800),
-            48.vspace,
-             Center(
-              child:isLoading ? const CircularProgressIndicator()
-                   :  GradientButtonWidget(
-                text: 'Continue',
-                width:200,
-                onTap: (){
-                  setState(() {
-                        isLoading = true;
-                      });
-                  signupController.userVerifyPhone(phone.text);
-                  Get.toNamed(Appnames.loginotp,arguments: phone.text);
-                 
-                  // Get.toNamed(Appnames.loginotp);
-                },
-              ),
+          backgroundColor: Colors.transparent,
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: 48,
+                      left: MediaQuery.of(context).size.width / 14,
+                      right: MediaQuery.of(context).size.width / 14),
+                  child: Image.asset(
+                    AppImages.logo,
+                  ),
+                ),
+                24.vspace,
+                Center(
+                    child: Text(
+                  'Login',
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        color: Colors.white,
+                      ),
+                )),
+                36.vspace,
+                const OnBoardText(text: 'Phone', color: Colors.white),
+                16.vspace,
+                PhoneNumberField(
+                    textEditingController: phone,
+                    hintText: 'Enter phone',
+                    hintColor: Colors.grey.shade800),
+                48.vspace,
+                Center(
+                  child: GradientButtonWidget(
+                    text: 'Continue',
+                    width: 200,
+                    onTap: () {
+                      if (phone.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text("Please Enter your phone number.")),
+                        );
+                      } else {
+                        signupController.userVerifyPhone(phone.text);
+                        Get.toNamed(Appnames.loginotp, arguments: phone.text);
+                      }
+                    },
+                  ),
+                ),
+                36.vspace,
+                const Center(
+                    child: OnBoardText(
+                        text: 'Don’t have an account?', color: Colors.white)),
+                36.vspace,
+                Center(
+                    child: InkWell(
+                        onTap: () {
+                          Get.toNamed(Appnames.register);
+                        },
+                        child: const OnBoardText(
+                            text: ' Create an account', color: Colors.white))),
+                24.vspace,
+              ],
             ),
-            36.vspace,
-           const Center(child:  OnBoardText(text: 'Don’t have an account?', color: Colors.white)),
-             36.vspace,
-            Center(child:  InkWell(
-            onTap: (){
-              Get.toNamed(Appnames.register);
-            },
-            child:const OnBoardText(text: ' Create an account', color: Colors.white))),
-           24.vspace,
-            ],
           ),
-        ),
-        bottomNavigationBar:const BottomWidget()
-      ),
+          bottomNavigationBar: const BottomWidget()),
     );
   }
 }

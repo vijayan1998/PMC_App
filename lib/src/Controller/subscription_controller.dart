@@ -1,6 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:pmc/src/Controller/Auth/api_url.dart';
 import 'package:pmc/src/Model/subget.dart';
 import 'package:pmc/src/Model/subscription_model.dart';
@@ -10,6 +14,11 @@ import 'package:pmc/src/Views/Sharedpreference/user_controller.dart';
 class SubscriptionController extends GetxController{
   List<dynamic> countPlans = <dynamic>[].obs;
   UserController currentUser = Get.put(UserController());
+   String keyId = 'rzp_test_9G0AuysSgQi4b2';
+  String keySecret = '209THtmJVeyiJJXvHE20LfjJ';
+  String apiUrl = 'https://api.razorpay.com/v1/orders';
+  String country = '';
+  double? conversionRate;
 
 Future<List<SubscriptionModel>> subscriptionPlans() async {
  
@@ -69,5 +78,107 @@ Future<List<dynamic>> getCount() async {
   }
 }
 
+// Function to create an order
+  Future createOrder(int tax) async {
+       double taxRate = tax / 100;
+    double taxAmount = conversionRate! * taxRate;
+    double totalWithTax = conversionRate! + taxAmount; 
+    // print('shfk:$totalWithTax');
+      // Round the total amount to the nearest whole number
+  int roundedTotal = totalWithTax.round();
+  //  print('shfsdgk:$roundedTotal');
+    final basicAuth =
+        'Basic ${base64Encode(utf8.encode('$keyId:$keySecret'))}'; // Base64 Encoding for Basic Auth
+
+    final Map<String, dynamic> orderData = {
+      'amount': (roundedTotal * 100).toInt(),
+      'currency': 'INR',
+    };
+    // print('sdks:$orderData');
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': basicAuth,
+        },
+        body: jsonEncode(orderData),
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        return responseData['id']; // Return the response data
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<void> getUserLocation() async {
+    try {
+      // Request location permission
+      var status = await Permission.location.request();
+
+      if (status.isGranted) {
+        // Permission granted, get location
+        Position position = await Geolocator.getCurrentPosition(
+          // ignore: deprecated_member_use
+          desiredAccuracy: LocationAccuracy.medium,
+        );
+
+        // Reverse geocode to get the country code
+        List<Placemark> placemarks =
+            await placemarkFromCoordinates(position.latitude, position.longitude);
+        String countryCode = placemarks.first.isoCountryCode ?? "Unknown";
+
+        // setState(() {
+          country = countryCode;
+        // });
+      } else if (status.isDenied) {
+        // Permission denied, show message
+        Fluttertoast.showToast(msg: 'Please Razorpay Amount');
+      } else if (status.isPermanentlyDenied) {
+        // Permission permanently denied, guide to app settings
+       Fluttertoast.showToast(msg: 'Please Stripe payment');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error getting location: $e");
+      }
+    }
+  }
+  
+  // convertCurrency code
+  Future<void> convertCurrency(String amount, String from, String to) async {
+     const String apiKey = "8ae590e70d4cf6c51b57bbae";
+    final String url =
+        "https://v6.exchangerate-api.com/v6/$apiKey/pair/$from/$to/$amount";
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['result'] == "success") {
+          // setState(() {
+            conversionRate = data['conversion_result'];
+          // });
+        } else {
+          if (kDebugMode) {
+            print("Error fetching exchange rates: ${data['error']}");
+          }
+        }
+      } else {
+        if (kDebugMode) {
+          print("HTTP error: ${response.statusCode}");
+        }
+      }
+    } catch (error) {
+      if (kDebugMode) {
+        print("Error: $error");
+      }
+    }
+  }
 
 }

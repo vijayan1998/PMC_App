@@ -414,6 +414,10 @@ petitparser
 3.2
 file:///C:/Users/hackw/AppData/Local/Pub/Cache/hosted/pub.dev/petitparser-6.0.2/
 file:///C:/Users/hackw/AppData/Local/Pub/Cache/hosted/pub.dev/petitparser-6.0.2/lib/
+pin_input_text_field
+2.13
+file:///C:/Users/hackw/AppData/Local/Pub/Cache/hosted/pub.dev/pin_input_text_field-4.5.2/
+file:///C:/Users/hackw/AppData/Local/Pub/Cache/hosted/pub.dev/pin_input_text_field-4.5.2/lib/
 pinput
 2.15
 file:///C:/Users/hackw/AppData/Local/Pub/Cache/hosted/pub.dev/pinput-5.0.0/
@@ -470,6 +474,10 @@ shared_preferences_windows
 3.3
 file:///C:/Users/hackw/AppData/Local/Pub/Cache/hosted/pub.dev/shared_preferences_windows-2.4.1/
 file:///C:/Users/hackw/AppData/Local/Pub/Cache/hosted/pub.dev/shared_preferences_windows-2.4.1/lib/
+sms_autofill
+3.0
+file:///C:/Users/hackw/AppData/Local/Pub/Cache/hosted/pub.dev/sms_autofill-2.4.1/
+file:///C:/Users/hackw/AppData/Local/Pub/Cache/hosted/pub.dev/sms_autofill-2.4.1/lib/
 source_span
 2.18
 file:///C:/Users/hackw/AppData/Local/Pub/Cache/hosted/pub.dev/source_span-1.10.0/
