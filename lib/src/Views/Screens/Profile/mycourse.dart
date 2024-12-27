@@ -29,12 +29,11 @@ class _MyCoursePageState extends State<MyCoursePage> {
   String selectCourse = '';
   String selectCompleted = '';
   String selectActive = '';
- 
+
   @override
   void initState() {
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -241,10 +240,9 @@ class _MyCoursePageState extends State<MyCoursePage> {
             },
             decoration: InputDecoration(
               hintText: 'Search By Course Name',
-              hintStyle: Theme.of(context)
-                  .textTheme
-                  .bodySmall!
-                  .copyWith(color: Colors.grey.shade800,),
+              hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    color: Colors.grey.shade800,
+                  ),
               filled: true,
               fillColor: Colors.white,
               border: const OutlineInputBorder(
@@ -253,10 +251,9 @@ class _MyCoursePageState extends State<MyCoursePage> {
               )),
               prefixIcon: const Icon(Icons.search),
             ),
-            style: Theme.of(context)
-                .textTheme
-                .labelMedium!
-                .copyWith(color: Colors.grey.shade800,),
+            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                  color: Colors.grey.shade800,
+                ),
           ),
           24.vspace,
           FutureBuilder(
@@ -270,8 +267,11 @@ class _MyCoursePageState extends State<MyCoursePage> {
                 return const Center(child: Text('No courses found'));
               } else {
                 List<CourseModel> courses = snapshot.data!;
-                List<CourseModel> courseList =
-                    courses.where((course) => course.completed == false && course.mainTopic!.toLowerCase().contains(selectActive)).toList();
+                List<CourseModel> courseList = courses
+                    .where((course) =>
+                        course.completed == false &&
+                        course.mainTopic!.toLowerCase().contains(selectActive))
+                    .toList();
                 return ListView.builder(
                   shrinkWrap: true,
                   itemCount: courseList.length,
@@ -305,7 +305,8 @@ class _MyCoursePageState extends State<MyCoursePage> {
                                       type: courseList[index].type,
                                       courseid: courseList[index].id,
                                       data: courseList[index].content != null
-                                          ? jsonDecode(courseList[index].content!)
+                                          ? jsonDecode(
+                                              courseList[index].content!)
                                           : null)));
                         },
                       ),
@@ -329,32 +330,30 @@ class _MyCoursePageState extends State<MyCoursePage> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           24.hspace,
-            TextField(
-                    controller: completedCourse,
-                    onChanged: (value) {
-                      setState(() {
-                      selectCompleted = value.toLowerCase();
-                      });
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'Search By Course Name',
-                      hintStyle: Theme.of(context)
-            .textTheme
-            .bodySmall!
-            .copyWith(color: Colors.grey.shade800,),
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(
-          Radius.circular(16),
-                      )),
-                      prefixIcon: const Icon(Icons.search),
-                    ),
-                    style: Theme.of(context)
-          .textTheme
-          .labelMedium!
-          .copyWith(color: Colors.grey.shade800,),
+          TextField(
+            controller: completedCourse,
+            onChanged: (value) {
+              setState(() {
+                selectCompleted = value.toLowerCase();
+              });
+            },
+            decoration: InputDecoration(
+              hintText: 'Search By Course Name',
+              hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    color: Colors.grey.shade800,
+                  ),
+              filled: true,
+              fillColor: Colors.white,
+              border: const OutlineInputBorder(
+                  borderRadius: BorderRadius.all(
+                Radius.circular(16),
+              )),
+              prefixIcon: const Icon(Icons.search),
+            ),
+            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                  color: Colors.grey.shade800,
                 ),
+          ),
           24.vspace,
           FutureBuilder(
             future: courseController.getCourse(currentUser.user.id.toString()),
@@ -367,8 +366,13 @@ class _MyCoursePageState extends State<MyCoursePage> {
                 return const Center(child: Text('No courses found'));
               } else {
                 List<CourseModel> courses = snapshot.data!;
-                List<CourseModel> courseList =
-                    courses.where((course) => course.completed == true && course.mainTopic!.toLowerCase().contains(selectCompleted)).toList();
+                List<CourseModel> courseList = courses
+                    .where((course) =>
+                        course.completed == true &&
+                        course.mainTopic!
+                            .toLowerCase()
+                            .contains(selectCompleted))
+                    .toList();
                 return ListView.builder(
                   shrinkWrap: true,
                   itemCount: courseList.length,
@@ -403,7 +407,8 @@ class _MyCoursePageState extends State<MyCoursePage> {
                                       courseid: courseList[index].id,
                                       completed: courseList[index].completed,
                                       data: courseList[index].content != null
-                                          ? jsonDecode(courseList[index].content!)
+                                          ? jsonDecode(
+                                              courseList[index].content!)
                                           : null)));
                         },
                       ),
@@ -439,32 +444,30 @@ class _MyCoursePageState extends State<MyCoursePage> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           24.hspace,
-           TextField(
-                    controller: allCourse,
-                    onChanged: (value) {
-                      setState(() {
-                      selectCourse = value.toLowerCase();
-                      });
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'Search By Course Name',
-                      hintStyle: Theme.of(context)
-            .textTheme
-            .bodySmall!
-            .copyWith(color: Colors.grey.shade800,),
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(
-          Radius.circular(16),
-                      )),
-                      prefixIcon: const Icon(Icons.search),
-                    ),
-                    style: Theme.of(context)
-          .textTheme
-          .labelMedium!
-          .copyWith(color: Colors.grey.shade800,),
+          TextField(
+            controller: allCourse,
+            onChanged: (value) {
+              setState(() {
+                selectCourse = value.toLowerCase();
+              });
+            },
+            decoration: InputDecoration(
+              hintText: 'Search By Course Name',
+              hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    color: Colors.grey.shade800,
+                  ),
+              filled: true,
+              fillColor: Colors.white,
+              border: const OutlineInputBorder(
+                  borderRadius: BorderRadius.all(
+                Radius.circular(16),
+              )),
+              prefixIcon: const Icon(Icons.search),
+            ),
+            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                  color: Colors.grey.shade800,
                 ),
+          ),
           24.vspace,
           FutureBuilder<List<CourseModel>>(
             future: courseController.getCourse(currentUser.user.id.toString()),
@@ -477,7 +480,10 @@ class _MyCoursePageState extends State<MyCoursePage> {
                 return const Center(child: Text('No courses found'));
               } else {
                 List<CourseModel> courses = snapshot.data!;
-                List<CourseModel> courseList = courses.where((course) => course.mainTopic!.toLowerCase().contains(selectCourse)).toList();
+                List<CourseModel> courseList = courses
+                    .where((course) =>
+                        course.mainTopic!.toLowerCase().contains(selectCourse))
+                    .toList();
                 return ListView.builder(
                   shrinkWrap: true,
                   itemCount: courseList.length,
@@ -501,7 +507,7 @@ class _MyCoursePageState extends State<MyCoursePage> {
                       date: formattedDate,
                       button: GradientButtonWidget(
                         text: 'View',
-                        width: MediaQuery.of(context).size.width / 3,
+                        width: 120,
                         onTap: () {
                           Navigator.push(
                               context,
@@ -512,21 +518,29 @@ class _MyCoursePageState extends State<MyCoursePage> {
                                       courseid: courseList[index].id,
                                       completed: courseList[index].completed,
                                       data: courseList[index].content != null
-                                          ? jsonDecode(courseList[index].content!)
+                                          ? jsonDecode(
+                                              courseList[index].content!)
                                           : null)));
                         },
                       ),
                       button1: GradientButtonWidget(
                         text: 'Certificate',
-                        width: MediaQuery.of(context).size.width / 3,
+                        width: 120,
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => CertificateViewScreen(
-                                        mainTopic: courseList[index].mainTopic,
-                                        formattedDate: formattedDate,
-                                      )));
+                          courseList[index].completed == true
+                              ? Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          CertificateViewScreen(
+                                            mainTopic:
+                                                courseList[index].mainTopic,
+                                            formattedDate: formattedDate,
+                                          )))
+                              : ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text("Course not complete")),
+                                );
                         },
                       ),
                     );
@@ -573,12 +587,15 @@ class CourseWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text(
-                text1,
-                style: Theme.of(context)
-                    .textTheme
-                    .labelMedium!
-                    .copyWith(color: Colors.white),
+              SizedBox(
+                width: 180,
+                child: Text(
+                  text1,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: Colors.white),
+                ),
               ),
               Text(
                 text2,

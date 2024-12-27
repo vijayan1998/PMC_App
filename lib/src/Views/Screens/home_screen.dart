@@ -824,11 +824,14 @@ class CommonHomeWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text(
-                text,
-                style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                      color: Colors.white,
-                    ),
+              SizedBox(
+                width: 200,
+                child: Text(
+                  text,
+                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: Colors.white,
+                      ),
+                ),
               ),
               Text(
                 text1,

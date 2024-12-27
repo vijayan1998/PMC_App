@@ -24,7 +24,13 @@ class _TermsServiceScreenState extends State<TermsServiceScreen> {
             },
           ),
         ),
-        title: Text('Terms of Service',style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.white),),
+        title: Text(
+          'Terms of Service',
+          style: Theme.of(context)
+              .textTheme
+              .bodyLarge!
+              .copyWith(color: Colors.white),
+        ),
         elevation: 12,
       ),
       body: SingleChildScrollView(
@@ -35,66 +41,197 @@ class _TermsServiceScreenState extends State<TermsServiceScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                'Terms Of Service',
+                '1. Introduction',
                 style: Theme.of(context).textTheme.labelMedium!.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
                     ),
               ),
+              7.vspace,
               Text(
-                'Last Updated on 23-05-2024',
-                style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                'Welcome to Pick My Course! By using our platform, you agree to abide by these Terms and Conditions. These terms govern your use of our app and services, including course generation and subscription plans.',
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
                       color: Colors.white,
+                      fontSize: 14,
                       fontWeight: FontWeight.w400,
                     ),
               ),
               16.vspace,
               Text(
-                'Terms Of Service:',
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                '2. Account Creation',
+                style: Theme.of(context).textTheme.labelMedium!.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
                     ),
               ),
               8.vspace,
-               Text(
-                'Lorem ipsum is a dummy text used for type setting instead of real text only for demonstration purpose. Lorem ipsum is a dummy text used for type setting instead of real text only for demonstration purpose ',
-                style: Theme.of(context).textTheme.labelMedium!.copyWith(
+              Text(
+                '. Users must create an account to access the services offered by Pick My Course',
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
                       color: Colors.white,
                     ),
               ),
               Text(
-                '.  Lorem Ipsum is dummy text',
+                '. Each account is personal and non-transferable. Sharing account credentials is strictly prohibited.',
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: Colors.white,
+                    ),
+              ),
+              16.vspace,
+              Text(
+                '3. Free Course Generation',
                 style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+              8.vspace,
+              Text(
+                '. Upon registration, users can generate up to 3 courses for free.',
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
                       color: Colors.white,
                     ),
               ),
               Text(
-                '.  Lorem Ipsum is dummy text',
-                style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                '. Access to additional course generations requires a subscription to one of our paid plans.',
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
                       color: Colors.white,
                     ),
               ),
               16.vspace,
-               Text(
-                'Terms of Service:',
+              Text(
+                '4. Subscription Plans',
                 style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+              8.vspace,
+              Text(
+                '. Subscription details, pricing, and features are available within the app and on our website (pickmycourse.ai).',
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
                       color: Colors.white,
                     ),
               ),
-               Text(
-                'Lorem ipsum is a dummy text used for type setting instead of real text only for demonstration purpose. Lorem ipsum is a dummy text used for type setting instead of real text only for demonstrtion purpose. Lorem ipsum is a dummy text used for type setting instead of real text only for demonstration purpose. Lorem ipsum is a dummy text used for type setting instead of real text only for demonstration purpose. Lorem ipsum is a dummy text used for type setting instead of real text only for demonstration purpose. Lorem ipsum is a dummy text used for type setting instead of real text only for demonstration purpose .',
-                style: Theme.of(context).textTheme.labelMedium!.copyWith(
+              Text(
+                '. Subscription payments are non-refundable.',
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: Colors.white,
+                    ),
+              ),
+              Text(
+                '. Failure to renew your subscription will result in limited access to additional course generation features.',
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
                       color: Colors.white,
                     ),
               ),
               16.vspace,
-               Text(
-                'Lorem ipsum is a dummy text used for type setting instead of real text only for demonstration purpose. Lorem ipsum is a dummy text used for type setting instead of real text only for demonstrtion purpose. Lorem ipsum is a dummy text used for type setting instead of real text only for demonstration purpose. Lorem ipsum is a dummy text used for type setting instead of real text only for demonstration purpose. Lorem ipsum is a dummy text used for type setting instead of real text only for demonstration purpose. Lorem ipsum is a dummy text used for type setting instead of real text only for demonstration purpose .',
+              Text(
+                '5. User Responsibilities',
                 style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+              8.vspace,
+              Text(
+                '. Users must provide accurate information during account registration.',
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
                       color: Colors.white,
                     ),
               ),
+              Text(
+                '. Content generated through Pick My Course is for personal and educational purposes only.',
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: Colors.white,
+                    ),
+              ),
+              Text(
+                '. Misuse of the platform for illegal or unethical activities is strictly prohibited.',
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: Colors.white,
+                    ),
+              ),
+               16.vspace,
+              Text(
+                '6. Intellectual Property',
+                style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+              8.vspace,
+              Text(
+                '. All AI-generated content remains the intellectual property of Pick My Course.',
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: Colors.white,
+                    ),
+              ),
+              Text(
+                '. Users may use the generated courses for personal or professional learning purposes but cannot resell or redistribute them without written consent.',
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: Colors.white,
+                    ),
+              ),
+               16.vspace,
+              Text(
+                '7. Termination of Services',
+                style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+              8.vspace,
+              Text(
+                '. Pick My Course reserves the right to terminate accounts that violate these terms or misuse the platform.',
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: Colors.white,
+                    ),
+              ),
+              Text(
+                '. Users can cancel their accounts at any time by contacting support@pickmycourse.ai.',
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: Colors.white,
+                    ),
+              ),
+              16.vspace,
+                 Text(
+                '8. Modifications to Terms',
+                style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+              8.vspace,
+              Text(
+                '. Pick My Course may update these terms at any time. Users will be notified of significant changes through the app or email.',
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: Colors.white,
+                    ),
+              ),
+              16.vspace,
+                 Text(
+                '9. Governing Law',
+                style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+              8.vspace,
+              Text(
+                '. These terms are governed by the laws of the jurisdiction where Pick My Course operates.',
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: Colors.white,
+                    ),
+              ),
+              16.vspace,
+              Text(
+                'For inquiries or support, contact us at support@pickmycourse.ai.',
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: Colors.white,
+                    ),
+              ),
+             
             ],
           ),
         ),
