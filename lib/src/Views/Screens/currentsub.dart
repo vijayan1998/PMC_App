@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:pmc/src/Controller/stripe_controller.dart';
 import 'package:pmc/src/Controller/subscription_controller.dart';
 import 'package:pmc/src/Model/subget.dart';
 import 'package:pmc/src/Views/Routes/route_name.dart';
+import 'package:pmc/src/Views/Screens/Profile/invoice.dart';
 import 'package:pmc/src/Views/Screens/navigator_screen.dart';
 import 'package:pmc/src/Views/Sharedpreference/user_controller.dart';
 import 'package:pmc/src/Views/Utilies/images.dart';
@@ -23,10 +25,14 @@ class _SubGetState extends State<SubGet> {
       Get.put(SubscriptionController());
   UserController currentUser = Get.put(UserController());
   @override
+  void initState(){
+    super.initState();
+    subscriptionController.getUserLocation();
+  }
+  @override
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        // color: Color(0xff300080),
         image: DecorationImage(
           image: AssetImage(AppImages.background2),
           fit: BoxFit.fill,
@@ -117,7 +123,7 @@ class _SubGetState extends State<SubGet> {
                                       ),
                                 ),
                                 Text(
-                                  'Amount: ₹0',
+                                 subscriptionController.country == 'IN' ? 'Amount: ₹ 0' : 'Amount: \$ 0',
                                   style: Theme.of(context)
                                       .textTheme
                                       .labelMedium!
@@ -148,60 +154,150 @@ class _SubGetState extends State<SubGet> {
                             top: 8, left: 8, right: 8, bottom: 8),
                         width: MediaQuery.of(context).size.width,
                         color: const Color(0xff4C07F4).withOpacity(0.25),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Current Plan',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                ),
-                                Text(
-                               subscription.plan,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                ),
-                                Text(
-                                  'Amount: ₹${subscription.amount}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelMedium!
-                                      .copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                ),
-                                8.vspace,
-                                GradientButtonWidget(
-                                  text: 'Change/Upgrade Plan',
-                                  width:
-                                      MediaQuery.of(context).size.width / 1.5,
-                                  onTap: () {
-                                    Get.toNamed(Appnames.subscription);
-                                  },
-                                )
-                              ],
+                            Text(
+                              'Current Plan',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                             ),
+                            Text(
+                           subscription.plan,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                            ),
+                            Text(
+                            subscriptionController.country == 'IN' ?'Amount:  ₹ ${subscription.amount}' :'Amount: \$ ${subscription.amount}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium!
+                                  .copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                            ),
+                            8.vspace,
+                            GradientButtonWidget(
+                              text: 'Change/Upgrade Plan',
+                              width:
+                                  MediaQuery.of(context).size.width / 1.5,
+                              onTap: () {
+                                Get.toNamed(Appnames.subscription);
+                              },
+                            )
                           ],
                         ),
                       );
                     }
                   },
                 ),
+                8.vspace,
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Text('Subscription History',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: Colors.white,
+                  ),),
+                ),
+                8.vspace,
+                FutureBuilder<List<Subscriptionget>>(
+                  future: subscriptionController.getSubscriptionList(currentUser.user.id.toString()), 
+                  builder: (context,snapshot){
+                    if(snapshot.connectionState == ConnectionState.waiting){
+                      return const Center(child: CircularProgressIndicator());
+                    }else if(snapshot.hasError){
+                      return Center(child: Text('Error : ${snapshot.hasError}'),);
+                    }else {
+                    List<Subscriptionget> subscriptionlist = snapshot.data!;
+                    return ListView.builder(
+                      itemCount:subscriptionlist.length,
+                      padding:const EdgeInsets.all(0),
+                      shrinkWrap: true,
+                      itemBuilder: (context,index){
+                          DateTime parsedDate = DateTime.parse(subscriptionlist[index].date.toString());
+                      String formattedDate =
+                          DateFormat('dd-MM-yyyy').format(parsedDate);
+                        return Container(
+                           margin: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.only(
+                            top: 8, left: 8, right: 8, bottom: 8),
+                        width: MediaQuery.of(context).size.width,
+                        color: const Color(0xff4C07F4).withOpacity(0.25),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                 Text(
+                              'Subscription : ${subscriptionlist[index].plan}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                            ),
+                            Text(
+                              'Subscription Expiry : $formattedDate',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                            ),
+                            Text(
+                              'No of Courses : ${subscriptionlist[index].course}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                            ),
+                            8.vspace,
+                            GradientButtonWidget(
+                              text: 'View',
+                              width:140,
+                              onTap: () {   
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => InvoiceScreen(
+                                  tax: subscriptionlist[index].tax.toString(), 
+                                  amount: subscriptionlist[index].amount,
+                                  plan: subscriptionlist[index].plan,
+                                  method: subscriptionlist[index].method,
+                                  date: formattedDate,
+                                  subscription: subscriptionlist[index].subscription,
+                                  subscriptionId: subscriptionlist[index].subscriberId,
+                                  course: subscriptionlist[index].course.toString(),
+                                  receiptId: subscriptionlist[index].recieptId,
+                                  )));         
+                              },
+                            )
+                              ],
+                            ) 
+                          ],
+                        ),
+                        );
+                      });
+                    }
+                  })
               ],
             ),
           ),

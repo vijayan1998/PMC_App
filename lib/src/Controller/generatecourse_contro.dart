@@ -147,11 +147,13 @@ courseProgress[courseId] = completionPercentage;
       
       final query = "${firstSubtopic['title']} $mainTopic in English";
       sendVideo(query, firstSubtopic['title'],jsonData,mainTopic,type,context);
+      updateCount();
     } else {
       final prompt =
           "Explain me about this subtopic of $mainTopic with examples :- ${firstSubtopic['title']}. Please Strictly Don't Give Additional Resources And Images.";
       final promptImage = "Example of ${firstSubtopic['title']} in $mainTopic";
       sendPrompt(prompt, promptImage,jsonData,mainTopic,type,context);
+      updateCount();
     }
   }
 
@@ -347,6 +349,10 @@ courseProgress[courseId] = completionPercentage;
         Uri.parse(ApiUrl.senddata),
         body: jsonEncode({
           'user': userController.user.id.toString(), // Replace with actual user data
+          'fname':userController.user.fname.toString(),
+          'lname':userController.user.lname.toString(),
+          'phone':userController.user.phone.toString(),
+          'email':userController.user.email.toString(),
           'content': jsonEncode(jsonData),
           'type': type, // Replace with actual type
           'mainTopic': mainTopic, // Replace with actual mainTopic
@@ -361,7 +367,6 @@ courseProgress[courseId] = completionPercentage;
         String courseId = responseData["courseId"];
           // Navigate to the content screen with response data
           countDoneTopics(courseId,jsonData, mainTopic);
-          updateCount();
           Navigator.push(context, MaterialPageRoute(builder: (context) =>  TopicType(
             topic: mainTopic,
             type: type,
@@ -423,6 +428,10 @@ Future<void> sendDataVideo(
       Uri.parse(ApiUrl.senddata),
       body: jsonEncode({
         'user': userController.user.id.toString(),
+        'fname':userController.user.fname.toString(),
+        'lname':userController.user.lname.toString(),
+        'phone':userController.user.phone.toString(),
+        'email':userController.user.email.toString(),
         'content': jsonEncode(jsonData),
         'type': type,
         'mainTopic': mainTopic,
@@ -435,7 +444,6 @@ Future<void> sendDataVideo(
           // Get the courseId from the response
         String courseId = responseData["courseId"];
            countDoneTopics(courseId,jsonData, mainTopic);
-           updateCount();
     Navigator.push(context, MaterialPageRoute(builder: (context) =>  TopicType(
             topic: mainTopic,
             type: type,
@@ -580,7 +588,6 @@ handleSelect(String topics, String sub,Map<String, dynamic> jsonData,String main
 
            if (res.statusCode == 200) {
         final responsedata = jsonDecode(res.body);
-        updateCount();
           Navigator.push(context, MaterialPageRoute(builder: (context) =>  TopicType(
             topic: mainTopic,
             type: type,

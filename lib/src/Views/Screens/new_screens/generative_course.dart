@@ -40,7 +40,7 @@ class _GenerateCourseState extends State<GenerateCourse> {
   void initState(){
     super.initState();
     currentUser.getUserInfo();
-    fetchCourses();
+      fetchCourses();
   }
 
   @override
@@ -96,8 +96,8 @@ class _GenerateCourseState extends State<GenerateCourse> {
         countlength = counts.first['count'];
       });
     } catch (error) {
-      // Handle the error appropriately
-      Fluttertoast.showToast(msg: 'Error: $error');
+      // // Handle the error appropriately
+      // Fluttertoast.showToast(msg: 'Error: $error');
     }
   }
 

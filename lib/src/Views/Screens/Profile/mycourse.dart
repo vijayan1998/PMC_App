@@ -499,7 +499,7 @@ class _MyCoursePageState extends State<MyCoursePage> {
                       image: Image.network(
                         courseList[index].photo.toString(),
                         height: 86,
-                        width: MediaQuery.of(context).size.width / 7.5,
+                        width: MediaQuery.of(context).size.width / 7,
                         fit: BoxFit.cover,
                       ),
                       text1: courseList[index].mainTopic.toString(),
@@ -588,7 +588,7 @@ class CourseWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(
-                width: 180,
+                width: 160,
                 child: Text(
                   text1,
                   style: Theme.of(context)

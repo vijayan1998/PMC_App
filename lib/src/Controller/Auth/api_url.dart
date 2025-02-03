@@ -1,6 +1,6 @@
 // String get api => 'http://192.168.207.5:5000/';
-String get api => 'https://pmc-backend-k5q3.onrender.com/';
-//  String get api => 'http://192.168.189.177:5000/';
+ String get api => 'https://pmc-backend-k5q3.onrender.com/';
+//  String get api => 'http://192.168.71.5:5000/';
 class ApiUrl{
   static String get signup => "${api}api/usersignup";
   static String get signIn => "${api}api/usersignin";
@@ -35,5 +35,6 @@ class ApiUrl{
   static String get getsubscription => "${api}api/getsubsbyid";
   static String get updateCount => "${api}api/updatecount";
   static String get getupdateCount => "${api}api/getcountplan";
+  static String get policies => "${api}api/policies";
 }
 

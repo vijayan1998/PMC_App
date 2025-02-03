@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -325,7 +326,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       text: 'View',
                                       width: 120,
                                       onTap: () {
-                                        Navigator.push(
+                                        if(courses.isEmpty){
+                                           Fluttertoast.showToast(msg: 'No courses');
+                                        }else {
+                                            Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) => TopicType(
@@ -337,6 +341,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         ? jsonDecode(
                                                             courses[0].content!)
                                                         : null)));
+                                        }    
                                       },
                                     )),
                                 4.hspace,
@@ -349,7 +354,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       text: 'View',
                                       width: 120,
                                       onTap: () {
-                                               Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
+                                        if(courses.isEmpty){
+                                          Fluttertoast.showToast(msg: 'No Video Courses');
+                                        }else{
+                                             Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
                                           topic: courses[0].mainTopic,
                                           type: courses[0].type,
                                           courseid: courses[0].id,
@@ -357,6 +365,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           jsonDecode(courses[0].content!)
                                           : null
                                         )));
+                                        }          
                                       },
                                     )),
                                 4.hspace,
@@ -369,6 +378,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       text: 'View',
                                       width: 120,
                                       onTap: () {
+                                        if(courses.isEmpty){
+                                          Fluttertoast.showToast(msg: 'No Theory Course');
+                                        }else{
                                             Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
                                           topic: courses[0].mainTopic,
                                           type: courses[0].type,
@@ -377,6 +389,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           jsonDecode(courses[0].content!)
                                           : null
                                         )));
+                                        }     
                                       },
                                     )),
                               ],
@@ -421,7 +434,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     text: 'View',
                                     width: 120,
                                     onTap: () {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
+                                      if(courses.isEmpty){
+                                        Fluttertoast.showToast(msg: 'No Active Courses');
+                                      }else{
+                                         Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
                                           topic: courses[0].mainTopic,
                                           type: courses[0].type,
                                           courseid: courses[0].id,
@@ -429,6 +445,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           jsonDecode(courses[0].content!)
                                           : null
                                         )));
+                                      }      
                                     },
                                   )),
                               24.hspace,
@@ -439,7 +456,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     text: 'View',
                                     width: 120,
                                     onTap: () {
-                                       Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
+                                      if(courses.isEmpty){
+                                        Fluttertoast.showToast(msg: 'No Completed Courses');
+                                      }else{
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) =>TopicType(
                                           topic: courses[0].mainTopic,
                                           type: courses[0].type,
                                           courseid: courses[0].id,
@@ -447,6 +467,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           jsonDecode(courses[0].content!)
                                           : null
                                         )));
+                                      }
+                                     
                                     },
                                   )),
                             ],
@@ -812,7 +834,7 @@ class CommonHomeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(6),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(8),
       height: height,
       width: width,
       color: const Color(0xff200098),
@@ -825,7 +847,7 @@ class CommonHomeWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(
-                width: 200,
+                width: 160,
                 child: Text(
                   text,
                   style: Theme.of(context).textTheme.labelMedium!.copyWith(

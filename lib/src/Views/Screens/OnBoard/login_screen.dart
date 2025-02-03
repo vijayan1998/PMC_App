@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pmc/src/Controller/signup_controller.dart';
+import 'package:pmc/src/Controller/subscription_controller.dart';
 import 'package:pmc/src/Views/Routes/route_name.dart';
 import 'package:pmc/src/Views/Utilies/images.dart';
 import 'package:pmc/src/Views/Utilies/sizedbox_widget.dart';
@@ -19,7 +20,16 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController phone = TextEditingController();
   SignupController signupController = Get.put(SignupController());
+  SubscriptionController subscriptionController =
+      Get.put(SubscriptionController());
   bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    subscriptionController.getUserLocation();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -62,17 +72,23 @@ class _LoginScreenState extends State<LoginScreen> {
                 48.vspace,
                 Center(
                   child: GradientButtonWidget(
-                    text: 'Continue',
+                    text:'Continue',
                     width: 200,
-                    onTap: () {
+                    onTap: () async {
                       if (phone.text.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                               content: Text("Please Enter your phone number.")),
                         );
                       } else {
+                        setState(() {
+                          isLoading = true;
+                        });
                         signupController.userVerifyPhone(phone.text);
                         Get.toNamed(Appnames.loginotp, arguments: phone.text);
+                        setState(() {
+                          isLoading = false;
+                        });
                       }
                     },
                   ),

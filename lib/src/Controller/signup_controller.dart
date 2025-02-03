@@ -91,6 +91,7 @@ Future userVerifyPhone(String phone) async {
   );
 }
 
+
 Future<bool> verifyCode(String pin) async {
   PhoneAuthCredential credential = PhoneAuthProvider.credential(
       verificationId: verificationIdReceived, smsCode: pin);

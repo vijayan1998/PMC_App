@@ -100,8 +100,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           );
                         } else {
                           return Container(
-                            height: 76,
-                            width: 76,
+                            height: 60,
+                            width: 60,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               image: DecorationImage(
@@ -444,7 +444,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   },
                   child: Container(
                     height: 40,
-                    width: 150,
+                    width: 120,
                     padding: const EdgeInsets.all(8),
                     decoration: const BoxDecoration(
                         gradient: LinearGradient(

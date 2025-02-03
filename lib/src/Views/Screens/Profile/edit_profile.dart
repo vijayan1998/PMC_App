@@ -763,7 +763,6 @@ class _EditScreenState extends State<EditScreen> {
                                                           size: 30,
                                                         )),
                                                   ),
-                                                  16.vspace,
                                                   Center(
                                                     child: Text(
                                                       'Update Phone',
@@ -970,18 +969,15 @@ class _EditScreenState extends State<EditScreen> {
                                                                             TextAlign.center,
                                                                       ),
                                                                       24.vspace,
-                                                                      Row(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.center,
-                                                                        children: [
-                                                                          Text(
+                                                                      Center(
+                                                                        child: InkWell(
+                                                                          onTap: (){
+                                                                            signupController.userVerifyPhone(phone.text);
+                                                                          },
+                                                                          child: Text(
                                                                               'Resend OTP',
-                                                                              style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.white)),
-                                                                          24.hspace,
-                                                                          Text(
-                                                                              '90 sec',
-                                                                              style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.white)),
-                                                                        ],
+                                                                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.white)),
+                                                                        ),
                                                                       ),
                                                                       24.vspace,
                                                                       Center(
@@ -1021,32 +1017,29 @@ class _EditScreenState extends State<EditScreen> {
     );
   }
 
-  Future verifyOtp(String email) async {
-    String otp = pinputController.text;
-    if (otp.length == 6) {
-      isVerifiedAttempt = false;
-      if (!isShowbar) {
-        isShowbar = true;
-        signupController.verifyCode(otp).then((verified) {
-          if (verified) {
-            Fluttertoast.showToast(msg: 'OTP Verification Successful');
-            userdetailsController.updatePhone(phone.text, email);
-            // ignore: use_build_context_synchronously
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const EditScreen()));
-          } else if (otp == '456789') {
-            Fluttertoast.showToast(msg: 'OTP Verification Successful');
-            userdetailsController.updatePhone(phone.text, email);
-            // ignore: use_build_context_synchronously
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const EditScreen()));
-          } else {
-            Fluttertoast.showToast(msg: 'OTP Verification Failed');
-          }
-        });
+Future<void> verifyOtp(String email) async {
+  String otp = pinputController.text;
+  if (otp.length == 6) {
+    isVerifiedAttempt = false; // Not sure about its use, ensure its logic aligns with your app
+    if (!isShowbar) {
+      isShowbar = true; // Prevent multiple simultaneous attempts
+      try {
+        bool verified = await signupController.verifyCode(otp);
+        if (verified || otp == '456789') {
+          Fluttertoast.showToast(msg: 'OTP Verification Successful');
+          userdetailsController.updatePhone(phone.text, email);
+        } else {
+          Fluttertoast.showToast(msg: 'OTP Verification Failed');
+        }
+      } catch (error) {
+        // Handle any exceptions here
+        Fluttertoast.showToast(msg: 'An error occurred. Please try again.');
+      } finally {
+        isShowbar = false; // Reset the flag after the process completes
       }
-    } else {
-      isShowbar = false;
     }
+  } else {
+    Fluttertoast.showToast(msg: 'Invalid OTP. Please enter a 6-digit code.');
   }
+}
 }

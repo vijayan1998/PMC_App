@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pmc/src/Controller/signup_controller.dart';
 import 'package:pmc/src/Controller/stripe_controller.dart';
 import 'package:pmc/src/Controller/subscription_controller.dart';
 import 'package:pmc/src/Views/Routes/route_name.dart';
@@ -10,7 +11,6 @@ import 'package:pmc/src/Views/Utilies/images.dart';
 import 'package:pmc/src/Views/Utilies/sizedbox_widget.dart';
 import 'package:pmc/src/Views/Widget/gradient_button.dart';
 import 'package:pmc/src/Views/Widget/subscription_widget.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({super.key});
@@ -21,19 +21,16 @@ class SubscriptionScreen extends StatefulWidget {
 
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
   StripeController stripeController = Get.put(StripeController());
-
+  SignupController signupController = Get.put(SignupController());
   SubscriptionController subscriptionController =
       Get.put(SubscriptionController());
   UserController currentUser = Get.put(UserController());
   String stripePlanIdOne = 'price_1Pd8mq01PbsRdqnLHOa9bhU1';
   String stripePlanIdTwo = 'price_1PfbZK01PbsRdqnLRiN4vScM';
-    String keyId = 'rzp_test_9G0AuysSgQi4b2';
-  String keySecret = '209THtmJVeyiJJXvHE20LfjJ';
-  Razorpay razorpay = Razorpay();
   @override
   void initState(){
     super.initState();
-   subscriptionController.getUserLocation();    
+    subscriptionController.getUserLocation();    
   }
   @override
   Widget build(BuildContext context) {
@@ -91,8 +88,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               return SubscriptionWidget(
                                   width: MediaQuery.of(context).size.width,
                                   text1: plans[index].packagename,
-                                  text2: '₹ ${plans[index].price}',
-                                  text3: plans[index].course,
+                                  text2: subscriptionController.country == 'IN' ? '₹ ${plans[index].price}' :'\$ ${plans[index].price}' ,
+                                  text3: plans[index].course.toString(),
                                   text4: plans[index].subtopic,
                                   text5: 'AI Teacher',
                                   text7: plans[index].coursetype,
@@ -103,12 +100,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                     onTap: () async {
                                     plans[index].price == '0'?  
                                     Get.toNamed(Appnames.navigator) 
-                                  :  Navigator.push(context, MaterialPageRoute(builder: (context) =>  PaymentScreen(
+                                  : Navigator.push(context, MaterialPageRoute(builder: (context) =>  PaymentScreen(
                                         plan: plans[index].packagename,
-                                        amount: plans[index].price,
-                                        course: plans[index].course,
+                                        amount: plans[index].price.toString(),
+                                        course: plans[index].course.toString(),
                                         tax: plans[index].tax,
-                                      )));
+                                        inr: plans[index].inr,
+                                      )
+                                      )
+                                      );
                                       
                                      
                                     },
@@ -123,9 +123,4 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       ),
     );
   }
-
-
- 
-
-
 }

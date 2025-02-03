@@ -17,6 +17,7 @@ class PaymentWebView extends StatefulWidget {
   final String amount;
   final String course;
   final String stripeId;
+  final String tax;
 
   const PaymentWebView({
     super.key,
@@ -25,6 +26,7 @@ class PaymentWebView extends StatefulWidget {
     required this.amount,
     required this.course,
     required this.stripeId,
+    required this.tax,
   });
 
   @override
@@ -96,9 +98,10 @@ class _PaymentWebViewState extends State<PaymentWebView> {
                   final customerId = stripeData['customer'];
                   // Data for the second POST request
                   final formData = {
-                    "subscriberId": customerId,
+                    "subscriberId": widget.stripeId.toString(),
                     "user": userController.user.id.toString(),
                     "plan": widget.plan,
+                    "subscription": customerId.toString(),
                     "method": "stripe",
                     "fname": userController.user.fname.toString(),
                     "lname": userController.user.lname.toString(),
@@ -106,6 +109,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
                     "phone": userController.user.phone.toString(),
                     "amount": widget.amount,
                     "course": widget.course,
+                    "tax":widget.tax,
                   };
                   // Second POST request
                   final subscriptionResponse = await http.post(

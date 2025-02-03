@@ -34,29 +34,29 @@ class _FaqScreenState extends State<FaqScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: 66,
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12)
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.search, color: Colors.black, size: 26),
-                    6.hspace,
-                    Text(
-                      'Search Your Topic',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall!
-                          .copyWith(color: Colors.grey.shade800),
-                    ),
-                  ],
-                ),
-              ),
+              // Container(
+              //   width: MediaQuery.of(context).size.width,
+              //   height: 66,
+              //   padding: const EdgeInsets.all(8),
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     borderRadius: BorderRadius.circular(12)
+              //   ),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.start,
+              //     children: [
+              //       const Icon(Icons.search, color: Colors.black, size: 26),
+              //       6.hspace,
+              //       Text(
+              //         'Search Your Topic',
+              //         style: Theme.of(context)
+              //             .textTheme
+              //             .bodySmall!
+              //             .copyWith(color: Colors.grey.shade800),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               16.vspace,
                Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

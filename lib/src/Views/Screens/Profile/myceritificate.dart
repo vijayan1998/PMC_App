@@ -111,7 +111,7 @@ class _MyceritificateState extends State<Myceritificate> {
                             courseList[index].photo.toString(),
                             height: 86,
                             fit: BoxFit.cover,
-                            width: MediaQuery.of(context).size.width / 7.5,
+                            width: MediaQuery.of(context).size.width / 6.5,
                           ),
                           width: MediaQuery.of(context).size.width,
                           text: courseList[index].mainTopic.toString(),
@@ -119,7 +119,7 @@ class _MyceritificateState extends State<Myceritificate> {
                           text2: formattedDate,
                           widget: GradientButtonWidget(
                             text: 'Certificate',
-                            width: MediaQuery.of(context).size.width / 3.5,
+                            width: 120,
                             onTap: () {
                               Navigator.push(context, MaterialPageRoute(builder: (context) =>  CertificateViewScreen(
                                 mainTopic: courseList[index].mainTopic,

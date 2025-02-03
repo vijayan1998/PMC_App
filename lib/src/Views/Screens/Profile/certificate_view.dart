@@ -94,7 +94,7 @@ class _CertificateViewScreenState extends State<CertificateViewScreen> {
             },
           ),
         ),
-        title: Text('My Certificates',style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),),
+        title: Text('My Certificates',style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.white),),
         elevation: 12,
       ),
       body: SingleChildScrollView(

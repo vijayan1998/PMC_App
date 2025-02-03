@@ -40,7 +40,7 @@ class _SignupScreenState extends State<SignupScreen> {
     if (picked != null) {
       setState(() {
         selectedDate = picked;
-        dob.text = DateFormat.yMd().format(selectedDate);
+        dob.text = DateFormat('dd/MM/yyyy').format(selectedDate);
       });
     }
   }
@@ -192,9 +192,9 @@ class _SignupScreenState extends State<SignupScreen> {
                         if (value!.isEmpty) {
                         return 'Please Required Email';
                       } else if (!RegExp(
-                              r'^[\w#][\w\.\’+#](.[\w\\’#]+)\@[a-zA-Z0-9]+(.[a-zA-Z0-9]+)*(.[a-zA-Z]{2,20})$')
+                              r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
                           .hasMatch(value)) {
-                        return 'Enter correct EmailID';
+                        return 'Enter correct Email';
                       } else {
                         return null;
                       }
@@ -252,7 +252,6 @@ class _SignupScreenState extends State<SignupScreen> {
                       color: Colors.grey.shade800
                     ),
                     decoration: InputDecoration(
-                      
                       hintText: 'DD/MM/YYYY',
                       hintStyle: Theme.of(context).textTheme.labelLarge!.copyWith(
                             color: Colors.grey.shade800,
@@ -357,7 +356,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                   36.vspace,
                   Center(
-                      child:   isLoading ? const CircularProgressIndicator() : GradientButtonWidget(
+                      child:isLoading ? const CircularProgressIndicator() : GradientButtonWidget(
                     text: 'Continue',
                     width: 200,
                     onTap: () async {

@@ -19,7 +19,8 @@ class PaymentScreen extends StatefulWidget {
   final String? course;
   final String? amount;
   final int? tax;
-  const PaymentScreen({super.key, this.plan, this.course, this.amount, this.tax});
+  final int? inr;
+  const PaymentScreen({super.key, this.plan, this.course, this.amount, this.tax,this.inr});
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
@@ -29,8 +30,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
   String stripePlanIdOne = 'price_1Pd8mq01PbsRdqnLHOa9bhU1';
   String stripePlanIdTwo = 'price_1PfbZK01PbsRdqnLRiN4vScM';
 
-  String keyId = 'rzp_test_9G0AuysSgQi4b2';
-  String keySecret = '209THtmJVeyiJJXvHE20LfjJ';
+  String keyId ='rzp_live_wYeGLl5JSaiCMw';
+  String keySecret = 'KSEuAacIV5viLTWGIq4a9xwC';
+  String orderId ='';
   
   UserController currentUser = Get.put(UserController());
   SubscriptionController subscriptionController = Get.put(SubscriptionController());
@@ -60,13 +62,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
       title: 'Success',
       desc: 'External Wallet',
       btnOkOnPress: () {
-        // Navigator.pushNamedAndRemoveUntil(context, Appnames.subscribePlanDetails, (route) => false);
       },
     ).show();
   }
 
   void handlePaymentSuccess(PaymentSuccessResponse response) {
-    // String todayDate = DateFormat('yMd').format(DateTime.now());
     AwesomeDialog(
       context: context,
       animType: AnimType.leftSlide,
@@ -80,7 +80,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
         final basicAuth =
         'Basic ${base64Encode(utf8.encode('$keyId:$keySecret'))}';
             final formData = {
-          "subscriberId": response.paymentId.toString(),
+          "subscriberId": orderId,
+          "subscription": response.paymentId.toString(),
           "user": currentUser.user.id.toString(),
           "plan": widget.plan,
           "method": "Razorpay",
@@ -90,6 +91,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           "phone": currentUser.user.phone.toString(),
           "amount": widget.amount,
           "course": widget.course,
+          "tax":widget.tax
         };
 
     try {
@@ -194,9 +196,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
              onTap: () async {
                try {
                  var cost = int.parse(widget.amount.toString());
-                  String orderId = await subscriptionController.createOrder(widget.tax!);
+                   orderId = await subscriptionController.createOrder(widget.tax!,widget.inr!);
                    var options = {
-                   'key': 'rzp_test_9G0AuysSgQi4b2',
+                   'key': 'rzp_live_wYeGLl5JSaiCMw',
                    'amount': cost * 100,
                    'name': 'Pickmycourse.',
                    'order_id': orderId,
@@ -268,6 +270,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                            plan: widget.plan.toString(),
                            amount: widget.amount.toString(),
                            course: widget.course.toString(),
+                           tax: widget.tax.toString(),
                            url: stripeUrl),
                      ),
                    );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -44,6 +45,7 @@ class _TopicTypeState extends State<TopicType> {
       Get.put(GenerateCourseController());
   CourseController courseController = Get.put(CourseController());
   UserController currentUser = Get.put(UserController());
+  String selectValue = '1';
 
   bool isLoggedIn = true;
   @override
@@ -135,7 +137,79 @@ class _TopicTypeState extends State<TopicType> {
                   color: Colors.white,
                   size: 30,
                 ));
-          })
+          }),
+          PopupMenuButton<String>(
+              iconColor: Colors.white,
+              icon: const Icon(Icons.report),
+              iconSize: 30,
+              color: const Color(0xFF200098),
+              onSelected: (String value) {
+                setState(() {
+                  selectValue = value;
+                });
+              },
+              itemBuilder: (BuildContext context) => [
+                    PopupMenuItem(
+                      onTap: () {
+                        Fluttertoast.showToast(msg: 'Your report is update successfully');
+                      },
+                      value: '1',
+                      child: Text(
+                        'Child exploitation',
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              color: Colors.white,
+                            ),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      onTap: () {
+                        Fluttertoast.showToast(msg: 'Your report is update successfully');
+                      },
+                      value: '2',
+                      child: Text(
+                        'Violence and self-harm',
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              color: Colors.white,
+                            ),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: '3',
+                      onTap: (){
+                          Fluttertoast.showToast(msg: 'Your report is update successfully');
+                      },
+                      child: Text(
+                        'Nudity and sexual content',
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              color: Colors.white,
+                            ),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: '4',
+                      onTap: (){
+                          Fluttertoast.showToast(msg: 'Your report is update successfully');
+                      },
+                      child: Text(
+                        'Other inappropriate or illegal content',
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              color: Colors.white,
+                            ),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: '5',
+                      onTap: (){
+                          Fluttertoast.showToast(msg: 'Your report is update successfully');
+                      },
+                      child: Text(
+                        'Unwanted content',
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              color: Colors.white,
+                            ),
+                      ),
+                    ),
+                  ]),
         ],
         backgroundColor: const Color(0xFF200098),
       ),
@@ -174,50 +248,55 @@ class _TopicTypeState extends State<TopicType> {
                     Center(
                         child: Text(
                       widget.topic.toString(),
-                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
                             color: Colors.white,
                           ),
                       //TextStyle(color: Colors.white, fontSize: 20),
                     )),
-
                     if (isComplete == true || widget.completed == true) ...[
                       FutureBuilder(
-                        future:courseController.getCourse(currentUser.user.id.toString()) ,
-                        builder: (context,snapshot){
-                          if(snapshot.connectionState == ConnectionState.waiting){
-                            return  const Center(child: CircularProgressIndicator());
-                          }else if(snapshot.hasError){
-                            return Center(child: Text('Error:${snapshot.hasError}')); 
-                          }else {
-                            List<CourseModel> courses = snapshot.data!;
-                            var enddate = courses.firstWhere((course) => course.mainTopic == widget.topic);
-                            var end = enddate.end;
+                          future: courseController
+                              .getCourse(currentUser.user.id.toString()),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return Center(
+                                  child: Text('Error:${snapshot.hasError}'));
+                            } else {
+                              List<CourseModel> courses = snapshot.data!;
+                              var enddate = courses.firstWhere(
+                                  (course) => course.mainTopic == widget.topic);
+                              var end = enddate.end;
                               DateTime parsedDate =
-                        DateTime.parse(end.toString());
-                    // Formatting the DateTime into the desired format
-                    String formattedDate =
-                        DateFormat('dd-MM-yyyy').format(parsedDate);
-                          return Center(
-                              child: GradientButtonWidget(
+                                  DateTime.parse(end.toString());
+                              // Formatting the DateTime into the desired format
+                              String formattedDate =
+                                  DateFormat('dd-MM-yyyy').format(parsedDate);
+                              return Center(
+                                  child: GradientButtonWidget(
                                 height: 40,
-                            text: "Download Certificate",
-                            width: MediaQuery.of(context).size.width,
-                            onTap: () {
-                              generateCourseController.finishcourse(
-                                  widget.courseid!, context);
-                              Get.toNamed(Appnames.navigator);
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => CertificateViewScreen(
-                                            mainTopic: widget.topic.toString(),
-                                            formattedDate: formattedDate,
-                                          )));
-                            },
-                          ));
-                          }
-                        }
-                      ),
+                                text: "Download Certificate",
+                                width: MediaQuery.of(context).size.width,
+                                onTap: () {
+                                  generateCourseController.finishcourse(
+                                      widget.courseid!, context);
+                                  Get.toNamed(Appnames.navigator);
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              CertificateViewScreen(
+                                                mainTopic:
+                                                    widget.topic.toString(),
+                                                formattedDate: formattedDate,
+                                              )));
+                                },
+                              ));
+                            }
+                          }),
                       16.vspace,
                     ] else ...[
                       Row(
@@ -272,7 +351,6 @@ class _TopicTypeState extends State<TopicType> {
                       ),
                       16.vspace,
                     ],
-
                     if (widget.data != null &&
                         widget.drawersubtopic != null) ...[
                       youtubeOrImage != null

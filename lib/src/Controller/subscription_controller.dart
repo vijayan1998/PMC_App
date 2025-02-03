@@ -14,14 +14,13 @@ import 'package:pmc/src/Views/Sharedpreference/user_controller.dart';
 class SubscriptionController extends GetxController{
   List<dynamic> countPlans = <dynamic>[].obs;
   UserController currentUser = Get.put(UserController());
-   String keyId = 'rzp_test_9G0AuysSgQi4b2';
-  String keySecret = '209THtmJVeyiJJXvHE20LfjJ';
+   String keyId = 'rzp_live_wYeGLl5JSaiCMw';
+  String keySecret = 'KSEuAacIV5viLTWGIq4a9xwC';
   String apiUrl = 'https://api.razorpay.com/v1/orders';
   String country = '';
   double? conversionRate;
 
 Future<List<SubscriptionModel>> subscriptionPlans() async {
- 
   try {
     final response = await http.get(Uri.parse(ApiUrl.subscriptionPlan));
 
@@ -63,6 +62,28 @@ Future<Subscriptionget?> getSubscriptionByUserId(String userId) async {
   }
 }
 
+Future<List<Subscriptionget>> getSubscriptionList(String userId) async {
+  try {
+    final url = Uri.parse('${ApiUrl.getsubscription}?user=$userId');
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['success'] && data['sub'].isNotEmpty) {
+        // Map subscriptions to a list
+        return (data['sub'] as List)
+            .map((sub) => Subscriptionget.fromJson(sub))
+            .toList();
+      } else {
+        return []; // Return an empty list if no subscriptions
+      }
+    } else {
+      throw Exception('Server error: ${response.statusCode}');
+    }
+  } catch (e) {
+    throw Exception('Error fetching subscription plans: $e');
+  }
+}
+
 Future<List<dynamic>> getCount() async {
   final response = await http.get(
     Uri.parse("${ApiUrl.getupdateCount}?user=${currentUser.user.id.toString()}"),
@@ -79,10 +100,10 @@ Future<List<dynamic>> getCount() async {
 }
 
 // Function to create an order
-  Future createOrder(int tax) async {
+  Future createOrder(int tax,int inr) async {
        double taxRate = tax / 100;
-    double taxAmount = conversionRate! * taxRate;
-    double totalWithTax = conversionRate! + taxAmount; 
+    double taxAmount = inr * taxRate;
+    double totalWithTax = inr + taxAmount; 
     // print('shfk:$totalWithTax');
       // Round the total amount to the nearest whole number
   int roundedTotal = totalWithTax.round();
@@ -131,10 +152,8 @@ Future<List<dynamic>> getCount() async {
         List<Placemark> placemarks =
             await placemarkFromCoordinates(position.latitude, position.longitude);
         String countryCode = placemarks.first.isoCountryCode ?? "Unknown";
-
-        // setState(() {
           country = countryCode;
-        // });
+          
       } else if (status.isDenied) {
         // Permission denied, show message
         Fluttertoast.showToast(msg: 'Please Razorpay Amount');
@@ -151,7 +170,7 @@ Future<List<dynamic>> getCount() async {
   
   // convertCurrency code
   Future<void> convertCurrency(String amount, String from, String to) async {
-     const String apiKey = "8ae590e70d4cf6c51b57bbae";
+    const String apiKey = "8ae590e70d4cf6c51b57bbae";
     final String url =
         "https://v6.exchangerate-api.com/v6/$apiKey/pair/$from/$to/$amount";
 
