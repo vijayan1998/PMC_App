@@ -27,6 +27,7 @@ class _SignupOtpScreenState extends State<SignupOtpScreen> {
 SignupController signupController = Get.put(SignupController());
       bool isVerifiedAttempt = false;
   bool isShowbar = false;
+  bool isLoading = false;
   late Duration otpTimeDuration;
   Timer? otpTimer;
   String email ='';
@@ -46,23 +47,23 @@ final args = widget.arugument ?? Get.arguments;
     dob = arguments[4] as String;  
   }
   startOtpTimer();
-     listenToIncomingSMS();
+    //  listenToIncomingSMS();
     super.initState();
   }
- void listenToIncomingSMS() {
-    telephony.listenIncomingSms(
-        onNewMessage: (SmsMessage message) {
-          // verify if we are reading the correct sms or not
-          if (message.body!.contains("pick-my-course-da02e")) {
-            String otpCode = message.body!.substring(0, 6);
-            setState(() {
-              pinputController.text = otpCode;
-              // wait for 1 sec and then press handle submit
-            });
-          }
-        },
-        listenInBackground: false);
-  }
+//  void listenToIncomingSMS() {
+//     telephony.listenIncomingSms(
+//         onNewMessage: (SmsMessage message) {
+//           // verify if we are reading the correct sms or not
+//           if (message.body!.contains("pick-my-course-da02e")) {
+//             String otpCode = message.body!.substring(0, 6);
+//             setState(() {
+//               pinputController.text = otpCode;
+//               // wait for 1 sec and then press handle submit
+//             });
+//           }
+//         },
+//         listenInBackground: false);
+//   }
  void startOtpTimer() {
     otpTimeDuration = const Duration(minutes: 1);
     otpTimer?.cancel(); // Cancel any existing timer
@@ -181,9 +182,20 @@ void dispose(){
                     height: MediaQuery.of(context).size.height / 5,
                   ),
                   Center(
-                    child: GradientButtonWidget(text: 'Continue', width: 200,
-                    onTap: ()  {
-                       verifyOtp();
+                    child: GradientButtonWidget(
+                      text: 'Continue', width: 200,
+                      isWaiting: isLoading,
+                    onTap: () async {
+                      if(isLoading) return;
+                      setState(() {
+                        isLoading = true;
+                      });
+                      await Future.delayed(const Duration(seconds: 2),(){
+                         verifyOtp();
+                      });
+                      setState(() {
+                        isLoading = false;
+                      });
                     },),
                   ),
                   24.vspace,

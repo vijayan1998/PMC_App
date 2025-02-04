@@ -356,9 +356,10 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                   36.vspace,
                   Center(
-                      child:isLoading ? const CircularProgressIndicator() : GradientButtonWidget(
+                      child: GradientButtonWidget(
                     text: 'Continue',
                     width: 200,
+                    isWaiting: isLoading,
                     onTap: () async {
                       if(formKey.currentState!.validate()){
                       }
@@ -367,13 +368,18 @@ class _SignupScreenState extends State<SignupScreen> {
                           const SnackBar(
                               content: Text("Please accept Terms & Privacy")),);
                       } else {
+                        if(isLoading) return;
                         signupController.userVerifyPhone(phone.text);
                         setState(() {
                         isLoading = true;
                       });
-                      await Get.toNamed(Appnames.registerotp,arguments: [email.text,firstname.text,
+                      await Future.delayed(const Duration(seconds: 2),(){
+                      Get.toNamed(Appnames.registerotp,arguments: [email.text,firstname.text,
                         lastname.text,phone.text,dob.text]);
-                        
+                      });
+                      setState(() {
+                        isLoading = false;
+                      });
                       }
                     },
                   )),

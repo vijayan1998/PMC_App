@@ -5,7 +5,8 @@ class GradientButtonWidget extends StatelessWidget {
   final double width;
   final double? height;
   final Function()? onTap;
-  const GradientButtonWidget({super.key, required this.text, required this.width, this.onTap,  this.height});
+  final bool? isWaiting;
+  const GradientButtonWidget({super.key, required this.text, required this.width, this.onTap,  this.height,this.isWaiting});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,9 @@ class GradientButtonWidget extends StatelessWidget {
                                 
                                 ],
                               )),
-                              child: Text(
+                              child: isWaiting == true ? const Center(child: CircularProgressIndicator(
+                                color: Colors.white,
+                              )) : Text(
                                 text,
                                 style: Theme.of(context)
                                     .textTheme

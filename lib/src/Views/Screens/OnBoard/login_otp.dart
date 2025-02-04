@@ -41,29 +41,29 @@ class _LoginOtpScreenState extends State<LoginOtpScreen>
       final arguments = args;
       phone = arguments as String;
     }
-   startOtpTimer();
-    listenToIncomingSMS();
+    startOtpTimer();
+    // listenToIncomingSMS();
 
     super.initState();
   }
 
-  void listenToIncomingSMS() {
-    telephony.listenIncomingSms(
-        onNewMessage: (SmsMessage message) {
-          // Handle message
-          // verify if we are reading the correct sms or not
-          if (message.body!.contains("pick-my-course-da02e")) {
-            String otpCode = message.body!.substring(0, 6);
-            setState(() {
-              pinputController.text = otpCode;
-              // wait for 1 sec and then press handle submit
-            });
-          }
-        },
-        listenInBackground: false);
-  }
+  // void listenToIncomingSMS() {
+  //   telephony.listenIncomingSms(
+  //       onNewMessage: (SmsMessage message) {
+  //         // Handle message
+  //         // verify if we are reading the correct sms or not
+  //         if (message.body!.contains("pick-my-course-da02e")) {
+  //           String otpCode = message.body!.substring(0, 6);
+  //           setState(() {
+  //             pinputController.text = otpCode;
+  //             // wait for 1 sec and then press handle submit
+  //           });
+  //         }
+  //       },
+  //       listenInBackground: false);
+  // }
 
- void startOtpTimer() {
+  void startOtpTimer() {
     otpTimeDuration = const Duration(minutes: 1);
     otpTimer?.cancel(); // Cancel any existing timer
     otpTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -76,6 +76,7 @@ class _LoginOtpScreenState extends State<LoginOtpScreen>
       });
     });
   }
+
   @override
   void dispose() {
     super.dispose();
@@ -166,11 +167,13 @@ class _LoginOtpScreenState extends State<LoginOtpScreen>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     InkWell(
-                        onTap:otpTimeDuration.inSeconds == 0 ? () {
-                          signupController.userVerifyPhone(phone);
-                          // restart the timer
-                          startOtpTimer();
-                        } : null,
+                        onTap: otpTimeDuration.inSeconds == 0
+                            ? () {
+                                signupController.userVerifyPhone(phone);
+                                // restart the timer
+                                startOtpTimer();
+                              }
+                            : null,
                         child: const OnBoardText(
                             text: 'Resend OTP', color: Colors.white)),
                     8.hspace,
@@ -189,8 +192,18 @@ class _LoginOtpScreenState extends State<LoginOtpScreen>
                     child: GradientButtonWidget(
                   text: 'Continue',
                   width: 200,
-                  onTap: () {
-                    verifyOtp();
+                  isWaiting: isLoading,
+                  onTap: () async {
+                    if (isLoading) return;
+                    setState(() {
+                      isLoading = true;
+                    });
+                    await Future.delayed(const Duration(seconds: 2), () {
+                      verifyOtp();
+                    });
+                    setState(() {
+                      isLoading = false;
+                    });
                   },
                 )),
                 24.vspace,
@@ -203,30 +216,30 @@ class _LoginOtpScreenState extends State<LoginOtpScreen>
     );
   }
 
-Future<void> verifyOtp() async {
-  String otp = pinputController.text;
-  if (otp.length == 6) {
-    isVerifiedAttempt = false; // Not sure about its use, ensure its logic aligns with your app
-    if (!isShowbar) {
-      isShowbar = true; // Prevent multiple simultaneous attempts
-      try {
-        bool verified = await signupController.verifyCode(otp);
-        if (verified || otp == '456789') {
-          Fluttertoast.showToast(msg: 'OTP Verification Successful');
-          signupController.signIn(phone);
-        } else {
-          Fluttertoast.showToast(msg: 'OTP Verification Failed');
+  Future<void> verifyOtp() async {
+    String otp = pinputController.text;
+    if (otp.length == 6) {
+      isVerifiedAttempt =
+          false; // Not sure about its use, ensure its logic aligns with your app
+      if (!isShowbar) {
+        isShowbar = true; // Prevent multiple simultaneous attempts
+        try {
+          bool verified = await signupController.verifyCode(otp);
+          if (verified || otp == '456789') {
+            Fluttertoast.showToast(msg: 'OTP Verification Successful');
+            signupController.signIn(phone);
+          } else {
+            Fluttertoast.showToast(msg: 'OTP Verification Failed');
+          }
+        } catch (error) {
+          // Handle any exceptions here
+          Fluttertoast.showToast(msg: 'An error occurred. Please try again.');
+        } finally {
+          isShowbar = false; // Reset the flag after the process completes
         }
-      } catch (error) {
-        // Handle any exceptions here
-        Fluttertoast.showToast(msg: 'An error occurred. Please try again.');
-      } finally {
-        isShowbar = false; // Reset the flag after the process completes
       }
+    } else {
+      Fluttertoast.showToast(msg: 'Invalid OTP. Please enter a 6-digit code.');
     }
-  } else {
-    Fluttertoast.showToast(msg: 'Invalid OTP. Please enter a 6-digit code.');
   }
-}
-
 }

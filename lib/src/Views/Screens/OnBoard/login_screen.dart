@@ -74,6 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: GradientButtonWidget(
                     text:'Continue',
                     width: 200,
+                    isWaiting: isLoading,
                     onTap: () async {
                       if (phone.text.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -81,11 +82,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               content: Text("Please Enter your phone number.")),
                         );
                       } else {
+                        if(isLoading) return;
                         setState(() {
                           isLoading = true;
                         });
-                        signupController.userVerifyPhone(phone.text);
+                        await Future.delayed(const Duration(seconds: 2),(){
+                            signupController.userVerifyPhone(phone.text);
                         Get.toNamed(Appnames.loginotp, arguments: phone.text);
+                        });
                         setState(() {
                           isLoading = false;
                         });

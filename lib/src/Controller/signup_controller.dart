@@ -77,8 +77,7 @@ Future userVerifyPhone(String phone) async {
    auth.verifyPhoneNumber(
     phoneNumber: '$countryCode$phone',
     verificationCompleted: (PhoneAuthCredential credential) async {
-      await auth.signInWithCredential(credential).then((value) {
-      });
+      await auth.signInWithCredential(credential).then((value) {});
     },
    
     verificationFailed: (FirebaseAuthException exception) {
@@ -90,7 +89,6 @@ Future userVerifyPhone(String phone) async {
     codeAutoRetrievalTimeout: (String verificationId) {},
   );
 }
-
 
 Future<bool> verifyCode(String pin) async {
   PhoneAuthCredential credential = PhoneAuthProvider.credential(
