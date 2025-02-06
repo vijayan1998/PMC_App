@@ -2,7 +2,7 @@
 class AppImages{
  static const String background = 'assets/images/background1.png';
  static const String background1 = 'assets/images/background3.png';
-  static const String background2 = 'assets/images/Background.jpg';
+ static const String background2 = 'assets/images/Background.jpg';
  static const String logo = 'assets/images/logo.png';
  static const String course = 'assets/images/images.jpeg';
  static const String course1 = 'assets/images/image1.jpeg';
@@ -10,7 +10,7 @@ class AppImages{
  static const String splash = 'assets/images/splash1.png';
  static const String splash3 = 'assets/images/splash3.png';
  static const String splash4 =  'assets/images/splash4.png';
-  static const String splash5 =  'assets/images/splash5.png';
+ static const String splash5 =  'assets/images/splash5.png';
  static const String login = 'assets/images/login_bg.jpeg';
  static const String copyright ='assets/images/copyright.png';
  static const String heart = 'assets/images/heart.png';

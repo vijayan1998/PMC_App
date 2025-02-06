@@ -108,7 +108,7 @@ String desc,String priority) async {
 
 Future<List<TicketModel>> getTicket(String ticketId) async {
   final response = await http.get(
-    Uri.parse('${ApiUrl.getTicketUserid}?ticketId=$ticketId'),
+    Uri.parse('${ApiUrl.getTicketUserid}?user=$ticketId'),
   );
   if (response.statusCode == 200) {
     final jsonResponse = json.decode(response.body);

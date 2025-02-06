@@ -24,6 +24,7 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
   String? selectedValue;
   List<Map<String, dynamic>> categories = [];
   String? selectedCategory;
+  bool isLoading = false;
   List<DropdownMenuItem> droplist = [
     const DropdownMenuItem(
       value: 'Low',
@@ -433,9 +434,15 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
               Center(
                 child: GradientButtonWidget(
                   text: 'Raise a Ticket',
+                  isWaiting: isLoading,
                   width: MediaQuery.of(context).size.width / 2,
-                  onTap: () {
-                    ticketController.raiseTicket(
+                  onTap: () async {
+                     if (isLoading) return;
+                    setState(() {
+                      isLoading = true;
+                    });
+                     await Future.delayed(const Duration(seconds: 3), () {
+                       ticketController.raiseTicket(
                         currentUser.user.id.toString(),
                         currentUser.user.fname.toString(),
                         currentUser.user.lname.toString(),
@@ -445,6 +452,10 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
                         subject.text,
                         desc.text,
                         selectedValue.toString());
+                    });
+                    setState((){
+                      isLoading = false;
+                    });
                   },
                 ),
               ),
